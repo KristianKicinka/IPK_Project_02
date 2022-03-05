@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Wall -std=c11 -pedantic -lm -ggdb3 -g
+CFLAGS=-Wall -std=c11 -pedantic -ggdb3 -g
 FILES= sniffer.c
 
 .PHONY: ipk-sniffer clean
@@ -7,7 +7,7 @@ FILES= sniffer.c
 all:ipk-sniffer
 
 ipk-sniffer: $(FILES)
-	$(CC) $(CFLAGS) -o $@ $(FILES)
+	$(CC) $(CFLAGS) -o $@ $(FILES) -lm -lpcap
 
 clean:
 	@rm -f ipk-sniffer

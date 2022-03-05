@@ -4,19 +4,28 @@
 int main(int argc, char *argv[]){
 
     SnifferOptions sniffer_options;
-    pcap_if_t *all_devices;
+    pcap_t *sniffing_device;
 
     initialize_sniffer_options(&sniffer_options);
+    list_available_devices(&sniffer_options);
     check_arguments(argc,argv, &sniffer_options);
+
+    printf("devices : ");
+    for (int i = 0; i < sniffer_options.devices_count; i++){
+        printf("%s, ",sniffer_options.device_names[i]);
+    }
+    printf("\n");
+    printf("interface : %s\n",sniffer_options.interface);
+    
+    select_sniffing_device(&sniffing_device,&sniffer_options);
+
     printf("interface : %s\n",sniffer_options.interface);
     printf("port number : %d\n",sniffer_options.port_number);
     printf("icmp : %d\n",sniffer_options.icmp);
     printf("arp : %d\n",sniffer_options.arp);
     printf("udp : %d\n",sniffer_options.udp);
-    printf("tcp : %d\n",sniffer_options.tcp);
+    printf("tcp : %d\n",sniffer_options.tcp);    
     printf("packets count : %d\n",sniffer_options.packet_count);
-
-    print_available_devices(&all_devices);
 
     free(sniffer_options.interface);
     return 0;
@@ -31,6 +40,7 @@ void initialize_sniffer_options(SnifferOptions *sniffer_options){
     sniffer_options->packet_count = 1;
     sniffer_options->tcp = false;
     sniffer_options->udp = false;
+    sniffer_options->devices_count = 0;
 }
 
 void check_arguments(int argc, char *argv[], SnifferOptions *sniffer_options){
@@ -42,7 +52,8 @@ void check_arguments(int argc, char *argv[], SnifferOptions *sniffer_options){
                     if(OPTIONAL_ARGUMENT_IS_PRESENT){
                         strcpy(sniffer_options->interface,optarg);
                     }else{
-                        printf("Interface bez parametru\n");
+                        print_available_devices(sniffer_options);
+                        exit(0);
                     }
                     break;
                 case 'p':{
@@ -76,22 +87,51 @@ void check_arguments(int argc, char *argv[], SnifferOptions *sniffer_options){
     
 }
 
-void print_available_devices(pcap_if_t **all_devices){
-    pcap_if_t *device;
+void list_available_devices( SnifferOptions *sniffer_options){
+    pcap_if_t *all_devices, *device;
     char err_buffer[MAX_LENGTH];
-    int device_index = 1;
+    int device_index = 0;
 
-    if(pcap_findalldevs(all_devices,err_buffer)){
+    if(pcap_findalldevs(&all_devices,err_buffer)){
         return_error(INTERNAL_ERROR);
     }
 
-    printf("List of available devices :\n");
-    for(device = *all_devices; device != NULL; device = device->next){
-        printf("%d\t%s\n",device_index,device->name);
+    for(device = all_devices; device != NULL; device = device->next){
+        strcpy(sniffer_options->device_names[device_index], device->name);
+        sniffer_options->devices_count++;
         device_index++;
     }
-
     
+}
+
+void print_available_devices(SnifferOptions *sniffer_options){
+    printf("List of available devices :\n");
+    for (int i = 0; i < sniffer_options->devices_count; i++){
+        printf("%d\t%s\n", i+1, sniffer_options->device_names[i]);
+    }
+    
+}
+
+void select_sniffing_device(pcap_t **sniffing_device, SnifferOptions *sniffer_options ){
+    char err_buffer[MAX_LENGTH];
+    bool is_in_device_list = false;
+
+    for (int i = 0; i < sniffer_options->devices_count; i++){
+        if(strcmp(sniffer_options->device_names[i], sniffer_options->interface) == 0){
+            is_in_device_list = true;
+            break;
+        }
+    }
+    
+    if (is_in_device_list == false){
+        return_error(INTERNAL_ERROR);
+    }
+  
+    *sniffing_device = pcap_open_live(sniffer_options->interface , 65536 , 1 , 0 , err_buffer);
+	
+	if (sniffing_device == NULL){
+		return_error(INTERNAL_ERROR);
+	}
 }
 
 void return_error (int error_code){

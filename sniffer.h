@@ -11,6 +11,7 @@
 
 #include <getopt.h>
 #include <pcap.h>
+#include <sys/socket.h>
 
 
 #define ARG_ERROR 10
@@ -19,6 +20,8 @@
 
 typedef struct sniffer_options_t{
     char *interface;
+    char device_names[MAX_LENGTH][MAX_LENGTH];
+    int devices_count;
     int port_number;
     bool tcp;
     bool udp;
@@ -42,6 +45,7 @@ struct option long_options[] = {
 // https://stackoverflow.com/questions/7489093/getopt-long-proper-way-to-use-it
 // https://www.gnu.org/software/libc/manual/html_node/Getopt-Long-Options.html
 // https://www.itnetwork.cz/cecko/linux/cecko-a-linux-getopt-long-a-shell
+// https://www.tcpdump.org/manpages/pcap.3pcap.html
 
 #define OPTIONAL_ARGUMENT_IS_PRESENT \
     ((optarg == NULL && optind < argc && argv[optind][0] != '-') \
@@ -51,7 +55,9 @@ struct option long_options[] = {
 void initialize_sniffer_options(SnifferOptions *sniffer_options);
 void check_arguments(int argc, char *argv[], SnifferOptions *sniffer_options);
 void return_error (int error_code);
-void print_available_devices(pcap_if_t **all_devices);
+void list_available_devices( SnifferOptions *sniffer_options);
+void print_available_devices(SnifferOptions *sniffer_options);
+void select_sniffing_device(pcap_t **sniffing_device, SnifferOptions *sniffer_options );
 
 
 #endif // !SNIFFER_H
