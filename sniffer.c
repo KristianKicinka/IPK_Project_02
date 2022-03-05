@@ -2,7 +2,10 @@
 #include "sniffer.h"
 
 int main(int argc, char *argv[]){
+
     SnifferOptions sniffer_options;
+    pcap_if_t *all_devices;
+
     initialize_sniffer_options(&sniffer_options);
     check_arguments(argc,argv, &sniffer_options);
     printf("interface : %s\n",sniffer_options.interface);
@@ -12,14 +15,16 @@ int main(int argc, char *argv[]){
     printf("udp : %d\n",sniffer_options.udp);
     printf("tcp : %d\n",sniffer_options.tcp);
     printf("packets count : %d\n",sniffer_options.packet_count);
+
+    print_available_devices(&all_devices);
+
     free(sniffer_options.interface);
     return 0;
 }
 
 void initialize_sniffer_options(SnifferOptions *sniffer_options){
     if(!(sniffer_options->interface = (char *) malloc(MAX_LENGTH))){
-        fprintf(stderr,"Malloc fail\n");
-        exit(2);
+        return_error(INTERNAL_ERROR);
     }
     sniffer_options->arp = false;
     sniffer_options->icmp = false;
@@ -66,8 +71,39 @@ void check_arguments(int argc, char *argv[], SnifferOptions *sniffer_options){
                 }
             }
     }else{
-        fprintf(stderr,"Argument error\n");
-        exit(ARG_ERROR);
+       return_error(ARG_ERROR);
     }
     
+}
+
+void print_available_devices(pcap_if_t **all_devices){
+    pcap_if_t *device;
+    char err_buffer[MAX_LENGTH];
+    int device_index = 1;
+
+    if(pcap_findalldevs(all_devices,err_buffer)){
+        return_error(INTERNAL_ERROR);
+    }
+
+    printf("List of available devices :\n");
+    for(device = *all_devices; device != NULL; device = device->next){
+        printf("%d\t%s\n",device_index,device->name);
+        device_index++;
+    }
+
+    
+}
+
+void return_error (int error_code){
+    switch (error_code){
+        case ARG_ERROR:
+            fprintf(stderr,"Argument error!\n");
+            exit(ARG_ERROR);
+            break;
+        case INTERNAL_ERROR:
+            fprintf(stderr,"Internl error!\n");
+            exit(INTERNAL_ERROR);
+        default:
+            break;
+    }
 }

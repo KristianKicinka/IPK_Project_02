@@ -7,10 +7,14 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
-#include <unistd.h> 
+#include <unistd.h>
+
 #include <getopt.h>
+#include <pcap.h>
+
 
 #define ARG_ERROR 10
+#define INTERNAL_ERROR 20
 #define MAX_LENGTH 1024
 
 typedef struct sniffer_options_t{
@@ -46,6 +50,8 @@ struct option long_options[] = {
 
 void initialize_sniffer_options(SnifferOptions *sniffer_options);
 void check_arguments(int argc, char *argv[], SnifferOptions *sniffer_options);
+void return_error (int error_code);
+void print_available_devices(pcap_if_t **all_devices);
 
 
 #endif // !SNIFFER_H
