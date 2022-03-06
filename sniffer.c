@@ -16,7 +16,7 @@ int main(int argc, char *argv[]){
     }
     printf("\n");
     printf("interface : %s\n",sniffer_options.interface);
-    
+
     select_sniffing_device(&sniffing_device,&sniffer_options);
 
     printf("interface : %s\n",sniffer_options.interface);
@@ -101,7 +101,8 @@ void list_available_devices( SnifferOptions *sniffer_options){
         sniffer_options->devices_count++;
         device_index++;
     }
-    
+
+    pcap_freealldevs(all_devices);
 }
 
 void print_available_devices(SnifferOptions *sniffer_options){
@@ -132,6 +133,26 @@ void select_sniffing_device(pcap_t **sniffing_device, SnifferOptions *sniffer_op
 	if (sniffing_device == NULL){
 		return_error(INTERNAL_ERROR);
 	}
+}
+
+void proccess_sniffed_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *buffer){
+    
+    int packet_size = header->len;
+    struct iphdr *ip_header = (struct iphdr*)(buffer + sizeof(struct ethhdr));
+
+    switch (ip_header->protocol){
+        case ICMP_PROTOCOL:
+            //TODO print icmp
+            break;
+        case TCP_PROTOCOL:
+            // TODO print tcp
+            break;
+        case UDP_PROTOCOL:
+            // TODO print udp protocol
+            break;
+        default:
+            break;
+    }
 }
 
 void return_error (int error_code){
