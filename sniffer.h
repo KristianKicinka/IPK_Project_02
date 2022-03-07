@@ -22,6 +22,9 @@
 
 #define ARG_ERROR 10
 #define INTERNAL_ERROR 20
+#define SNIFFER_FILTER_ERROR 21
+#define CORRECT_CLOSE 0
+
 #define MAX_LENGTH 1024
 
 #define ICMP_PROTOCOL 1
@@ -39,6 +42,7 @@ typedef struct sniffer_options_t{
     bool udp;
     bool icmp;
     bool arp;
+    int parameters_count;
     int packet_count;
 }SnifferOptions;
 
@@ -60,6 +64,7 @@ struct option long_options[] = {
 // https://www.tcpdump.org/manpages/pcap.3pcap.html
 // https://www.tcpdump.org/manpages/pcap_loop.3pcap.html
 // https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml
+// https://www.devdungeon.com/content/using-libpcap-c
 
 #define OPTIONAL_ARGUMENT_IS_PRESENT \
     ((optarg == NULL && optind < argc && argv[optind][0] != '-') \
@@ -68,10 +73,11 @@ struct option long_options[] = {
 
 void initialize_sniffer_options(SnifferOptions *sniffer_options);
 void check_arguments(int argc, char *argv[], SnifferOptions *sniffer_options);
-void return_error (int error_code);
+void close_application (int exit_code);
 void list_available_devices( SnifferOptions *sniffer_options);
 void print_available_devices(SnifferOptions *sniffer_options);
 void select_sniffing_device(pcap_t **sniffing_device, SnifferOptions *sniffer_options );
+void set_filters(pcap_t **sniffing_device, SnifferOptions *sniffer_options );
 void proccess_sniffed_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *buffer);
 
 
