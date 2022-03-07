@@ -225,12 +225,11 @@ void set_filters(pcap_t **sniffing_device, SnifferOptions *sniffer_options ){
     if (pcap_compile((*sniffing_device), &filter, packet_filter, 0, PCAP_NETMASK_UNKNOWN ) == -1) {
         close_application(SNIFFER_FILTER_ERROR);
     }
-    printf("here i am \n");
+    
     if (pcap_setfilter((*sniffing_device), &filter) == -1) {
         close_application(SNIFFER_FILTER_ERROR);
     }
 
-    printf("here i am \n");
 }
 
 void close_application (int exit_code){
