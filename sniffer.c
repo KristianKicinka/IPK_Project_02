@@ -10,12 +10,12 @@ int main(int argc, char *argv[]){
     list_available_devices(&sniffer_options);
     check_arguments(argc,argv, &sniffer_options);
 
-    printf("devices : ");
+    /*printf("devices : ");
     for (int i = 0; i < sniffer_options.devices_count; i++){
         printf("%s, ",sniffer_options.device_names[i]);
     }
     printf("\n");
-    printf("interface : %s\n",sniffer_options.interface);
+    printf("interface : %s\n",sniffer_options.interface); */
 
     select_sniffing_device(&sniffing_device,&sniffer_options);
     set_filters(&sniffing_device, &sniffer_options);
@@ -30,6 +30,8 @@ int main(int argc, char *argv[]){
     printf("packets count : %d\n",sniffer_options.packet_count);
 
     pcap_loop(sniffing_device, sniffer_options.packet_count, proccess_sniffed_packet, NULL); // Calling sniffing loop
+
+    pcap_close(sniffing_device);
 
     free(sniffer_options.interface);
     return 0;
@@ -52,7 +54,7 @@ void initialize_sniffer_options(SnifferOptions *sniffer_options){
 void check_arguments(int argc, char *argv[], SnifferOptions *sniffer_options){
     if (argc>1){
         int character;
-        while ((character = getopt_long(argc, argv, "i::p:tun:", long_options, NULL)) != -1){
+        while ((character = getopt_long(argc, argv, "i::p::tun::", long_options, NULL)) != -1){
             switch (character){
                 case 'i':
                     if(OPTIONAL_ARGUMENT_IS_PRESENT){
@@ -63,9 +65,11 @@ void check_arguments(int argc, char *argv[], SnifferOptions *sniffer_options){
                     }
                     break;
                 case 'p':{
-                    char *ptr;
-                    int port_number = strtol(optarg, &ptr, 10);
-                    sniffer_options->port_number = port_number;
+                    if(OPTIONAL_ARGUMENT_IS_PRESENT){
+                        char *ptr;
+                        int port_number = strtol(optarg, &ptr, 10);
+                        sniffer_options->port_number = port_number;
+                    }
                     break;}
                 case 't':
                     sniffer_options->tcp = true;
@@ -84,9 +88,11 @@ void check_arguments(int argc, char *argv[], SnifferOptions *sniffer_options){
                     sniffer_options->parameters_count++;
                     break;
                 case 'n':{
-                    char *ptr;
-                    int packet_count = strtol(optarg, &ptr, 10);
-                    sniffer_options->packet_count = packet_count;
+                    if(OPTIONAL_ARGUMENT_IS_PRESENT){
+                        char *ptr;
+                        int packet_count = strtol(optarg, &ptr, 10);
+                        sniffer_options->packet_count = packet_count;
+                    }
                     break;}
                 
                 }
@@ -138,7 +144,7 @@ void select_sniffing_device(pcap_t **sniffing_device, SnifferOptions *sniffer_op
         close_application(INTERNAL_ERROR);
     }
 
-    *sniffing_device = pcap_open_live(sniffer_options->interface , 65536 , 1 , 0 , err_buffer);
+    *sniffing_device = pcap_open_live(sniffer_options->interface , 65536 , 1 , 1000 , err_buffer);
 	
 	if (sniffing_device == NULL){
 		close_application(INTERNAL_ERROR);
@@ -163,6 +169,7 @@ void proccess_sniffed_packet(u_char *args, const struct pcap_pkthdr *header, con
             // TODO print udp protocol
             break;
         default:
+            printf("Other protocol\n");
             break;
     }
 }
@@ -172,7 +179,6 @@ void process_ethernet_header(){
 }
 
 void set_filters(pcap_t **sniffing_device, SnifferOptions *sniffer_options ){
-    char err_buffer[MAX_LENGTH];
     struct bpf_program filter;
     char *packet_filter;
     int processed_params_count = sniffer_options->parameters_count;
