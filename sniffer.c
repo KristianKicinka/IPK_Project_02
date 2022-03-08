@@ -151,26 +151,47 @@ void select_sniffing_device(pcap_t **sniffing_device, SnifferOptions *sniffer_op
 	}
 }
 
-void proccess_sniffed_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *buffer){
+void proccess_sniffed_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *packet){
     
     int packet_size = header->len;
-    struct ip *ip_header = (struct ip*)(buffer + sizeof(struct ether_addr));  // on linux rename ip to iphdr and ether_addr to ethhdr
 
-    switch (ip_header->ip_p){
-        case ICMP_PROTOCOL:
-            //TODO print icmp
-            printf("ICMP packet\n");
-            break;
-        case TCP_PROTOCOL:
-            // TODO print tcp
-            printf("TCP packet\n");
-            break;
-        case UDP_PROTOCOL:
-            // TODO print udp protocol
-            break;
-        default:
-            printf("Other protocol\n");
-            break;
+    struct ether_header *eth_header;
+    eth_header = (struct ether_header *) packet;
+    struct ip *ip_header = (struct ip*) (packet + sizeof(struct ether_addr));  // on linux rename ip to iphdr and ether_addr to ethhdr
+
+    char timestamp[MAX_LENGTH];
+    char tmp[MAX_LENGTH];
+
+    strftime(timestamp,50,"%Y-%m-%dT%H:%M:%S", localtime((&header->ts.tv_sec)));
+    sprintf(timestamp,"%s.%.03d",timestamp, header->ts.tv_usec/1000);
+    strftime(tmp,50,"%z",localtime((&header->ts.tv_sec)));
+    sprintf(timestamp,"%s%s",timestamp,tmp);
+    printf("timestamp : %s\n",timestamp);
+    printf("packet type : %d\n",ip_header->ip_p);
+
+    if(ntohs(eth_header->ether_type) == ETHERTYPE_ARP){
+        printf("Arp packet\n");
+    }else if(ntohs(eth_header->ether_type) == ETHERTYPE_IP){
+        switch (ip_header->ip_p){
+            case ICMP_PROTOCOL:
+                //TODO print icmp
+                printf("ICMP packet\n");
+                break;
+            case TCP_PROTOCOL:
+                // TODO print tcp
+                printf("TCP packet\n");
+                break;
+            case UDP_PROTOCOL:
+                // TODO print udp protocol
+                printf("UDP packet\n");
+                break;
+            default:
+                printf("Other protocol\n");
+                break;
+        }
+
+    }else if(ntohs(eth_header->ether_type) == ETHERTYPE_IPV6){
+        printf("IPV6 packet\n");
     }
 }
 
@@ -183,43 +204,43 @@ void set_filters(pcap_t **sniffing_device, SnifferOptions *sniffer_options ){
     char *packet_filter;
     int processed_params_count = sniffer_options->parameters_count;
 
-    if(!(packet_filter = (char *) malloc(MAX_LENGTH))){
+    if(!(packet_filter = (char *) calloc(MAX_LENGTH,sizeof(char)))){
         close_application(INTERNAL_ERROR);
     }
 
     if(sniffer_options->tcp == true){
         if(processed_params_count == 1)
-            strcat(packet_filter,"tcp ");
+            strcat(packet_filter,"tcp");
         else
-            strcat(packet_filter,"tcp and ");
+            strcat(packet_filter,"tcp || ");
         processed_params_count--;
     }
     if(sniffer_options->udp == true){
         if(processed_params_count == 1)
             strcat(packet_filter,"udp ");
         else
-            strcat(packet_filter,"udp and ");
+            strcat(packet_filter,"udp || ");
         processed_params_count--;
     }
     if(sniffer_options->icmp == true){
         if(processed_params_count == 1)
             strcat(packet_filter,"icmp ");
         else
-            strcat(packet_filter,"icmp and ");
+            strcat(packet_filter,"icmp || ");
         processed_params_count--;
     }
     if(sniffer_options->arp == true){
         if(processed_params_count == 1)
             strcat(packet_filter,"arp ");
         else
-            strcat(packet_filter,"arp and ");
+            strcat(packet_filter,"arp || ");
         processed_params_count--;
     }
     if(sniffer_options->port_number != -1){
         char tmp[MAX_LENGTH];
 
         if(sniffer_options->parameters_count != 0)
-            sprintf(tmp,"and port %d ",sniffer_options->port_number);
+            sprintf(tmp,"&& port %d ",sniffer_options->port_number);
         else
             sprintf(tmp,"port %d ",sniffer_options->port_number);
 

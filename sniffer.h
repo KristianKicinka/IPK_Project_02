@@ -8,6 +8,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <unistd.h>
+#include <time.h> 
 
 #include <getopt.h>
 #include <pcap.h>
@@ -78,7 +79,7 @@ void list_available_devices( SnifferOptions *sniffer_options);
 void print_available_devices(SnifferOptions *sniffer_options);
 void select_sniffing_device(pcap_t **sniffing_device, SnifferOptions *sniffer_options );
 void set_filters(pcap_t **sniffing_device, SnifferOptions *sniffer_options );
-void proccess_sniffed_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *buffer);
+void proccess_sniffed_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *packet);
 
 
 #endif // !SNIFFER_H
