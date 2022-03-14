@@ -157,6 +157,7 @@ void proccess_sniffed_packet(u_char *args, const struct pcap_pkthdr *header, con
 
     if(ntohs(eth_header->ether_type) == ETHERTYPE_ARP){
         printf("Arp packet\n");
+        process_ipv4_arp_packet(packet, header);
     }else if(ntohs(eth_header->ether_type) == ETHERTYPE_IP){
 
         struct ip *ipv4_header = (struct ip*) (packet + sizeof(struct ether_header));  // on linux rename ip to iphdr and ether_addr to ethhdr
@@ -164,6 +165,8 @@ void proccess_sniffed_packet(u_char *args, const struct pcap_pkthdr *header, con
             case ICMP_PROTOCOL:
                 //TODO print icmp
                 printf("ICMP packet\n");
+                process_ipv4_header(ipv4_header);
+                process_ipv4_icmp_packet(ipv4_header, packet, header);
                 break;
             case TCP_PROTOCOL:
                 // TODO print tcp
@@ -210,6 +213,27 @@ void process_ipv4_header(struct ip* ipv4_header){
     printf("src IP : %s\n",inet_ntoa(ip_source.sin_addr));
     printf("dst IP : %s\n",inet_ntoa(ip_destination.sin_addr));
 
+}
+
+void process_ipv4_icmp_packet(struct ip* ipv4_header, const u_char *packet, const struct pcap_pkthdr *packet_header ){
+
+    struct icmp *icmp_header = (struct icmp*)(packet + ipv4_header->ip_hl + sizeof(struct ether_header));
+	int icmp_header_size =  sizeof(struct ether_header) + ipv4_header->ip_hl + sizeof(icmp_header);
+
+    const u_char *packet_data = packet + icmp_header_size;
+    int packet_data_size = packet_header->len - icmp_header_size;
+
+    process_packet_data(packet_data,packet_data_size);
+}
+
+void process_ipv4_arp_packet(const u_char *packet, const struct pcap_pkthdr *packet_header){
+    struct arphdr *arp_header = (struct arphdr*)(packet + sizeof(struct ether_header));
+    int arp_header_size = sizeof(struct ether_header) + sizeof(arp_header);
+
+    const u_char *packet_data = packet + arp_header_size;
+    int packet_data_size = packet_header->len - arp_header_size;
+
+     process_packet_data(packet_data,packet_data_size);
 }
 
 void process_ipv4_tcp_packet(struct ip* ipv4_header, const u_char *packet, const struct pcap_pkthdr *packet_header){

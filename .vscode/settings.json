@@ -2,6 +2,8 @@
     "C_Cpp.errorSquiggles": "Disabled",
     "files.associations": {
         "tcp.h": "c",
-        "ip_icmp.h": "c"
+        "ip_icmp.h": "c",
+        "in.h": "c",
+        "if_arp.h": "c"
     }
 }

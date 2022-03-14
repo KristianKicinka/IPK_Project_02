@@ -16,6 +16,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <net/ethernet.h>
+#include <net/if_arp.h>
 
 #include <netinet/ip.h>
 #include <netinet/udp.h>
@@ -91,6 +92,8 @@ void process_ipv4_udp_packet(struct ip* ipv4_header, const u_char *packet, const
 void process_ipv4_tcp_packet(struct ip* ipv4_header, const u_char *packet, const struct pcap_pkthdr *packet_header);
 void process_packet_data(const u_char *data, int data_size);
 void print_hexa_line(const u_char *data, int data_size, int data_offset);
+void process_ipv4_icmp_packet(struct ip* ipv4_header, const u_char *packet, const struct pcap_pkthdr *packet_header);
+void process_ipv4_arp_packet(const u_char *packet, const struct pcap_pkthdr *packet_header);
 
 
 #endif // !SNIFFER_H
