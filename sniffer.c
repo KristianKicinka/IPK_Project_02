@@ -41,14 +41,10 @@ void initialize_sniffer_options(SnifferOptions *sniffer_options){
     if(!(sniffer_options->interface = (char *) malloc(MAX_LENGTH))){
         close_application(INTERNAL_ERROR);
     }
-    sniffer_options->arp = false;
-    sniffer_options->icmp = false;
-    sniffer_options->packet_count = 1;
-    sniffer_options->tcp = false;
-    sniffer_options->udp = false;
-    sniffer_options->devices_count = 0;
-    sniffer_options->parameters_count = 0;
-    sniffer_options->port_number = -1;
+    sniffer_options->arp = false;   sniffer_options->icmp = false;
+    sniffer_options->tcp = false;   sniffer_options->udp = false;
+    sniffer_options->packet_count = 1;  sniffer_options->devices_count = 0;
+    sniffer_options->parameters_count = 0;  sniffer_options->port_number = -1;
 }
 
 void check_arguments(int argc, char *argv[], SnifferOptions *sniffer_options){
@@ -153,26 +149,18 @@ void select_sniffing_device(pcap_t **sniffing_device, SnifferOptions *sniffer_op
 
 void proccess_sniffed_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *packet){
     
-    int packet_size = header->len;
-
     struct ether_header *eth_header;
     eth_header = (struct ether_header *) packet;
-    struct ip *ip_header = (struct ip*) (packet + sizeof(struct ether_addr));  // on linux rename ip to iphdr and ether_addr to ethhdr
 
-    char timestamp[MAX_LENGTH];
-    char tmp[MAX_LENGTH];
-
-    strftime(timestamp,50,"%Y-%m-%dT%H:%M:%S", localtime((&header->ts.tv_sec)));
-    sprintf(timestamp,"%s.%.03d",timestamp, header->ts.tv_usec/1000);
-    strftime(tmp,50,"%z",localtime((&header->ts.tv_sec)));
-    sprintf(timestamp,"%s%s",timestamp,tmp);
-    printf("timestamp : %s\n",timestamp);
-    printf("packet type : %d\n",ip_header->ip_p);
+    print_timestamp(header);
+    process_ethernet_header(eth_header,header);
 
     if(ntohs(eth_header->ether_type) == ETHERTYPE_ARP){
         printf("Arp packet\n");
     }else if(ntohs(eth_header->ether_type) == ETHERTYPE_IP){
-        switch (ip_header->ip_p){
+
+        struct ip *ipv4_header = (struct ip*) (packet + sizeof(struct ether_header));  // on linux rename ip to iphdr and ether_addr to ethhdr
+        switch (ipv4_header->ip_p){
             case ICMP_PROTOCOL:
                 //TODO print icmp
                 printf("ICMP packet\n");
@@ -180,10 +168,14 @@ void proccess_sniffed_packet(u_char *args, const struct pcap_pkthdr *header, con
             case TCP_PROTOCOL:
                 // TODO print tcp
                 printf("TCP packet\n");
+                process_ipv4_header(ipv4_header);
+                process_ipv4_tcp_packet(ipv4_header, packet, header);
                 break;
             case UDP_PROTOCOL:
                 // TODO print udp protocol
                 printf("UDP packet\n");
+                process_ipv4_header(ipv4_header);
+                process_ipv4_udp_packet(ipv4_header, packet, header);
                 break;
             default:
                 printf("Other protocol\n");
@@ -192,11 +184,141 @@ void proccess_sniffed_packet(u_char *args, const struct pcap_pkthdr *header, con
 
     }else if(ntohs(eth_header->ether_type) == ETHERTYPE_IPV6){
         printf("IPV6 packet\n");
+        struct ip6_hdr *ipv6_header = (struct ip6_hdr *) (packet + sizeof(struct ether_header));
     }
 }
 
-void process_ethernet_header(){
+void process_ethernet_header(struct ether_header* eth_header, const struct pcap_pkthdr *header){
 
+    printf("src MAC : %.2X-%.2X-%.2X-%.2X-%.2X-%.2X \n",
+        eth_header->ether_shost[0],eth_header->ether_shost[1],eth_header->ether_shost[2],
+        eth_header->ether_shost[3],eth_header->ether_shost[4],eth_header->ether_shost[5]
+        );
+    printf("dst MAC : %.2X-%.2X-%.2X-%.2X-%.2X-%.2X \n",
+        eth_header->ether_dhost[0],eth_header->ether_dhost[1],eth_header->ether_dhost[2],
+        eth_header->ether_dhost[3],eth_header->ether_dhost[4],eth_header->ether_dhost[5]
+    );
+    printf("frame length : %d bytes\n",header->len);
+}
+
+void process_ipv4_header(struct ip* ipv4_header){
+    struct sockaddr_in ip_source, ip_destination;
+
+    ip_source.sin_addr.s_addr = ipv4_header->ip_src.s_addr;
+    ip_destination.sin_addr.s_addr = ipv4_header->ip_dst.s_addr;
+
+    printf("src IP : %s\n",inet_ntoa(ip_source.sin_addr));
+    printf("dst IP : %s\n",inet_ntoa(ip_destination.sin_addr));
+
+}
+
+void process_ipv4_tcp_packet(struct ip* ipv4_header, const u_char *packet, const struct pcap_pkthdr *packet_header){
+    struct tcphdr *tcp_header = (struct tcphdr*) (packet + (ipv4_header->ip_hl * 4) + sizeof(struct ether_header));
+    printf("src port : %u\n",ntohs(tcp_header->th_sport));
+    printf("dst port : %u\n",ntohs(tcp_header->th_dport));
+
+    int tcp_header_size = (ipv4_header->ip_hl * 4) + (tcp_header->th_off*4) + sizeof(struct ether_header);
+
+    const u_char *packet_data = packet + tcp_header_size;
+    int packet_data_size = packet_header->len - tcp_header_size;
+
+    process_packet_data(packet_data,packet_data_size);
+}
+
+void process_ipv4_udp_packet(struct ip* ipv4_header, const u_char *packet, const struct pcap_pkthdr *packet_header){
+    struct udphdr *udp_header = (struct udphdr*) (packet + (ipv4_header->ip_hl * 4) + sizeof(struct ether_header));
+    printf("src port : %u\n",ntohs(udp_header->uh_sport));
+    printf("dst port : %u\n",ntohs(udp_header->uh_dport));
+
+    int udp_header_size = (ipv4_header->ip_hl * 4) + udp_header->uh_ulen + sizeof(struct ether_header);
+
+    const u_char *packet_data = packet + udp_header_size;
+    int packet_data_size = packet_header->len - udp_header_size;
+
+    process_packet_data(packet_data,packet_data_size);
+}
+
+void process_packet_data(const u_char *data, int data_size){
+    int length_remaining = data_size;
+    int line_length;
+    int offset = 0;
+    u_char *character = ( u_char*) data;
+
+    if (data_size <= 0){
+        return;
+    }
+    
+    if (data_size <= LINE_WIDTH) {
+		print_hexa_line(character, data_size, offset);
+		return;
+	}
+
+    while(true){
+        line_length = LINE_WIDTH % length_remaining;
+        print_hexa_line(character, data_size, offset);
+        length_remaining = length_remaining - line_length;
+        character = character + line_length;
+        offset = offset + LINE_WIDTH;
+
+        if(length_remaining <= LINE_WIDTH){
+            print_hexa_line(character, data_size, offset);
+            break;
+        }
+    }
+
+}
+
+void print_hexa_line(const u_char *data, int data_size, int data_offset){
+    u_char *data_array;
+
+    // printing offset
+    printf("0x%04x: ", data_offset);
+
+    // hex printing
+    data_array = (u_char*) data;
+    for (int i = 0; i < data_size; i++){
+        printf("%02x ",*data_array);
+        data_array++;
+        if (i == 7){
+            printf(" ");
+        }
+        
+    }
+    if(data_size < 8){
+        printf(" ");
+    }
+    if (data_size < 16){
+        int gap = 16 - data_size; 
+        for (int i = 0; i < gap; i++){
+            printf("\t");
+        }
+        
+    }
+    printf("\t");
+
+    // ascii printing
+    data_array = (u_char*) data;
+    for (int i = 0; i < data_size; i++){
+        if (isprint(*data_array)){
+            printf("%c",*data_array);
+        }else{
+            printf(".");
+        }
+        data_array++;
+    }
+    
+    printf("\n");
+}
+
+void print_timestamp(const struct pcap_pkthdr *header){
+    char timestamp[MAX_LENGTH];
+    char tmp[MAX_LENGTH];
+
+    strftime(timestamp,50,"%Y-%m-%dT%H:%M:%S", localtime((&header->ts.tv_sec)));
+    sprintf(timestamp,"%s.%.03d",timestamp, header->ts.tv_usec/1000);
+    strftime(tmp,50,"%z",localtime((&header->ts.tv_sec)));
+    sprintf(timestamp,"%s%s",timestamp,tmp);
+    printf("timestamp : %s\n",timestamp);
 }
 
 void set_filters(pcap_t **sniffing_device, SnifferOptions *sniffer_options ){
@@ -212,35 +334,35 @@ void set_filters(pcap_t **sniffing_device, SnifferOptions *sniffer_options ){
         if(processed_params_count == 1)
             strcat(packet_filter,"tcp");
         else
-            strcat(packet_filter,"tcp || ");
+            strcat(packet_filter,"tcp or ");
         processed_params_count--;
     }
     if(sniffer_options->udp == true){
         if(processed_params_count == 1)
             strcat(packet_filter,"udp ");
         else
-            strcat(packet_filter,"udp || ");
+            strcat(packet_filter,"udp or ");
+        processed_params_count--;
+    }
+    if(sniffer_options->arp == true){
+        if(processed_params_count == 1)
+            strcat(packet_filter,"arp");
+        else
+            strcat(packet_filter,"arp or ");
         processed_params_count--;
     }
     if(sniffer_options->icmp == true){
         if(processed_params_count == 1)
             strcat(packet_filter,"icmp ");
         else
-            strcat(packet_filter,"icmp || ");
-        processed_params_count--;
-    }
-    if(sniffer_options->arp == true){
-        if(processed_params_count == 1)
-            strcat(packet_filter,"arp ");
-        else
-            strcat(packet_filter,"arp || ");
+            strcat(packet_filter,"icmp or ");
         processed_params_count--;
     }
     if(sniffer_options->port_number != -1){
         char tmp[MAX_LENGTH];
 
         if(sniffer_options->parameters_count != 0)
-            sprintf(tmp,"&& port %d ",sniffer_options->port_number);
+            sprintf(tmp,"and port %d ",sniffer_options->port_number);
         else
             sprintf(tmp,"port %d ",sniffer_options->port_number);
 

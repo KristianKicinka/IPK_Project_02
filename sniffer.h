@@ -9,6 +9,7 @@
 #include <stdbool.h>
 #include <unistd.h>
 #include <time.h> 
+#include <ctype.h>
 
 #include <getopt.h>
 #include <pcap.h>
@@ -27,6 +28,7 @@
 #define CORRECT_CLOSE 0
 
 #define MAX_LENGTH 1024
+#define LINE_WIDTH 16
 
 #define ICMP_PROTOCOL 1
 #define IPV4_PROTOCOL 4
@@ -66,6 +68,8 @@ struct option long_options[] = {
 // https://www.tcpdump.org/manpages/pcap_loop.3pcap.html
 // https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml
 // https://www.devdungeon.com/content/using-libpcap-c
+// vypis : https://www.tcpdump.org/other/sniffex.c
+// https://stackoverflow.com/questions/3464194/how-can-i-convert-an-integer-to-a-hexadecimal-string-in-c
 
 #define OPTIONAL_ARGUMENT_IS_PRESENT \
     ((optarg == NULL && optind < argc && argv[optind][0] != '-') \
@@ -80,6 +84,13 @@ void print_available_devices(SnifferOptions *sniffer_options);
 void select_sniffing_device(pcap_t **sniffing_device, SnifferOptions *sniffer_options );
 void set_filters(pcap_t **sniffing_device, SnifferOptions *sniffer_options );
 void proccess_sniffed_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *packet);
+void process_ethernet_header(struct ether_header* eth_header, const struct pcap_pkthdr *header);
+void print_timestamp(const struct pcap_pkthdr *header);
+void process_ipv4_header(struct ip* ipv4_header);
+void process_ipv4_udp_packet(struct ip* ipv4_header, const u_char *packet, const struct pcap_pkthdr *packet_header);
+void process_ipv4_tcp_packet(struct ip* ipv4_header, const u_char *packet, const struct pcap_pkthdr *packet_header);
+void process_packet_data(const u_char *data, int data_size);
+void print_hexa_line(const u_char *data, int data_size, int data_offset);
 
 
 #endif // !SNIFFER_H
