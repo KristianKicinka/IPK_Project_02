@@ -268,7 +268,7 @@ void process_packet_data(const u_char *data, int data_size){
 
 }
 
-void print_hexa_line(const u_char *data, int data_size, int data_offset){
+void print_hexa_line(const u_char *data, int data_length, int data_offset){
     u_char *data_array;
 
     // printing offset
@@ -276,7 +276,7 @@ void print_hexa_line(const u_char *data, int data_size, int data_offset){
 
     // hex printing
     data_array = (u_char*) data;
-    for (int i = 0; i < data_size; i++){
+    for (int i = 0; i < data_length; i++){
         printf("%02x ",*data_array);
         data_array++;
         if (i == 7){
@@ -284,11 +284,11 @@ void print_hexa_line(const u_char *data, int data_size, int data_offset){
         }
         
     }
-    if(data_size < 8){
+    if(data_length < 8){
         printf(" ");
     }
-    if (data_size < 16){
-        int gap = 16 - data_size; 
+    if (data_length < 16){
+        int gap = 16 - data_length; 
         for (int i = 0; i < gap; i++){
             printf("   ");
         }
@@ -298,7 +298,7 @@ void print_hexa_line(const u_char *data, int data_size, int data_offset){
 
     // ascii printing
     data_array = (u_char*) data;
-    for (int i = 0; i < data_size; i++){
+    for (int i = 0; i < data_length; i++){
         if (isprint(*data_array)){
             printf("%c",*data_array);
         }else{
