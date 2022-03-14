@@ -255,13 +255,13 @@ void process_packet_data(const u_char *data, int data_size){
 
     while(true){
         line_length = LINE_WIDTH % length_remaining;
-        print_hexa_line(character, data_size, offset);
+        print_hexa_line(character, line_length, offset);
         length_remaining = length_remaining - line_length;
         character = character + line_length;
         offset = offset + LINE_WIDTH;
 
         if(length_remaining <= LINE_WIDTH){
-            print_hexa_line(character, data_size, offset);
+            print_hexa_line(character, length_remaining, offset);
             break;
         }
     }
@@ -290,11 +290,11 @@ void print_hexa_line(const u_char *data, int data_size, int data_offset){
     if (data_size < 16){
         int gap = 16 - data_size; 
         for (int i = 0; i < gap; i++){
-            printf("\t");
+            printf("   ");
         }
         
     }
-    printf("\t");
+    printf(" ");
 
     // ascii printing
     data_array = (u_char*) data;
