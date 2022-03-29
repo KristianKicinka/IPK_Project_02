@@ -5,6 +5,8 @@
         "ip_icmp.h": "c",
         "in.h": "c",
         "if_arp.h": "c",
-        "ethernet.h": "c"
+        "ethernet.h": "c",
+        "ip6.h": "c",
+        "icmp6.h": "c"
     }
 }

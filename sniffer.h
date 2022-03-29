@@ -19,8 +19,12 @@
 #include <net/if_arp.h>
 
 #include <netinet/ip.h>
+#include <netinet/ip6.h>
+
 #include <netinet/udp.h>
 #include <netinet/tcp.h>
+
+#include <netinet/icmp6.h>
 #include <netinet/ip_icmp.h>
 
 #define ARG_ERROR 10
@@ -71,6 +75,8 @@ struct option long_options[] = {
 // https://www.devdungeon.com/content/using-libpcap-c
 // vypis : https://www.tcpdump.org/other/sniffex.c
 // https://stackoverflow.com/questions/3464194/how-can-i-convert-an-integer-to-a-hexadecimal-string-in-c
+// http://osr600doc.xinuos.com/en/SDK_netapi/sockC.TheIPv6sockaddrstructure.html
+// https://gist.github.com/q2hide/244bf94d3b72cc17d9ca
 
 #define OPTIONAL_ARGUMENT_IS_PRESENT \
     ((optarg == NULL && optind < argc && argv[optind][0] != '-') \
@@ -87,13 +93,21 @@ void set_filters(pcap_t **sniffing_device, SnifferOptions *sniffer_options );
 void proccess_sniffed_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *packet);
 void process_ethernet_header(struct ether_header* eth_header, const struct pcap_pkthdr *header);
 void print_timestamp(const struct pcap_pkthdr *header);
+// IPV4
 void process_ipv4_header(struct ip* ipv4_header);
 void process_ipv4_udp_packet(struct ip* ipv4_header, const u_char *packet, const struct pcap_pkthdr *packet_header);
 void process_ipv4_tcp_packet(struct ip* ipv4_header, const u_char *packet, const struct pcap_pkthdr *packet_header);
 void process_packet_data(const u_char *data, int data_size);
 void print_hexa_line(const u_char *data, int data_size, int data_offset);
 void process_ipv4_icmp_packet(struct ip* ipv4_header, const u_char *packet, const struct pcap_pkthdr *packet_header);
-void process_ipv4_arp_packet(const u_char *packet, const struct pcap_pkthdr *packet_header);
+void process_arp_packet(const u_char *packet, const struct pcap_pkthdr *packet_header);
+
+//IPV6
+
+void process_ipv6_header(struct ip6_hdr* ipv6_header);
+void process_ipv6_icmp_packet(struct ip6_hdr* ipv6_header, const u_char *packet, const struct pcap_pkthdr *packet_header );
+void process_ipv6_tcp_packet(struct ip6_hdr* ipv6_header, const u_char *packet, const struct pcap_pkthdr *packet_header);
+void process_ipv6_udp_packet(struct ip6_hdr* ipv6_header, const u_char *packet, const struct pcap_pkthdr *packet_header);
 
 
 #endif // !SNIFFER_H

@@ -17,9 +17,6 @@ int main(int argc, char *argv[]){
     printf("\n");
     printf("interface : %s\n",sniffer_options.interface); */
 
-    select_sniffing_device(&sniffing_device,&sniffer_options);
-    set_filters(&sniffing_device, &sniffer_options);
-
     printf("interface : %s\n",sniffer_options.interface);
     printf("port number : %d\n",sniffer_options.port_number);
     printf("count of parameters : %d\n",sniffer_options.parameters_count);
@@ -28,6 +25,9 @@ int main(int argc, char *argv[]){
     printf("udp : %d\n",sniffer_options.udp);
     printf("tcp : %d\n",sniffer_options.tcp);    
     printf("packets count : %d\n",sniffer_options.packet_count);
+
+    select_sniffing_device(&sniffing_device,&sniffer_options);
+    set_filters(&sniffing_device, &sniffer_options);
 
     pcap_loop(sniffing_device, sniffer_options.packet_count, proccess_sniffed_packet, NULL); // Calling sniffing loop
 
@@ -157,7 +157,10 @@ void proccess_sniffed_packet(u_char *args, const struct pcap_pkthdr *header, con
 
     if(ntohs(eth_header->ether_type) == ETHERTYPE_ARP){
         printf("Arp packet\n");
-        process_ipv4_arp_packet(packet, header);
+        print_timestamp(header);
+        process_ethernet_header(eth_header,header);
+        process_arp_packet(packet, header);
+
     }else if(ntohs(eth_header->ether_type) == ETHERTYPE_IP){
 
         struct ip *ipv4_header = (struct ip*) (packet + sizeof(struct ether_header));  // on linux rename ip to iphdr and ether_addr to ethhdr
@@ -181,13 +184,33 @@ void proccess_sniffed_packet(u_char *args, const struct pcap_pkthdr *header, con
                 process_ipv4_udp_packet(ipv4_header, packet, header);
                 break;
             default:
-                printf("Other protocol\n");
+                //printf("Other protocol\n");
                 break;
         }
 
     }else if(ntohs(eth_header->ether_type) == ETHERTYPE_IPV6){
-        printf("IPV6 packet\n");
+        //printf("IPV6 packet\n");
         struct ip6_hdr *ipv6_header = (struct ip6_hdr *) (packet + sizeof(struct ether_header));
+
+        switch (ipv6_header->ip6_ctlun.ip6_un1.ip6_un1_nxt){
+            case ICMP_PROTOCOL:
+                printf("ICMP v6 packet\n");
+                process_ipv6_header(ipv6_header);
+                process_ipv6_icmp_packet(ipv6_header, packet, header);
+                break;
+            case TCP_PROTOCOL:
+                printf("TCP v6 packet\n");
+                process_ipv6_header(ipv6_header);
+                process_ipv6_tcp_packet(ipv6_header, packet, header);
+                break;
+            case UDP_PROTOCOL:
+                printf("UDP v6 packet\n");
+                process_ipv6_header(ipv6_header);
+                process_ipv6_udp_packet(ipv6_header, packet, header);
+                break;
+            default:
+                break;
+        }
     }
 }
 
@@ -215,6 +238,20 @@ void process_ipv4_header(struct ip* ipv4_header){
 
 }
 
+void process_ipv6_header(struct ip6_hdr* ipv6_header){
+    struct sockaddr_in6 ip6_source, ip6_destination;
+    char ipv6_source[INET6_ADDRSTRLEN], ipv6_destination[INET6_ADDRSTRLEN];
+
+    ip6_source.sin6_addr.__u6_addr = ipv6_header->ip6_src.__u6_addr;
+    ip6_destination.sin6_addr.__u6_addr = ipv6_header->ip6_dst.__u6_addr;
+
+    inet_ntop(AF_INET6,&(ip6_source.sin6_addr),ipv6_source,INET6_ADDRSTRLEN);
+    inet_ntop(AF_INET6,&(ip6_destination.sin6_addr),ipv6_destination,INET6_ADDRSTRLEN);
+
+    printf("src IP : %s\n",ipv6_source);
+    printf("dst IP : %s\n",ipv6_destination);
+}
+
 void process_ipv4_icmp_packet(struct ip* ipv4_header, const u_char *packet, const struct pcap_pkthdr *packet_header ){
 
     struct icmp *icmp_header = (struct icmp*)(packet + ipv4_header->ip_hl + sizeof(struct ether_header));
@@ -226,7 +263,44 @@ void process_ipv4_icmp_packet(struct ip* ipv4_header, const u_char *packet, cons
     process_packet_data(packet_data,packet_data_size);
 }
 
-void process_ipv4_arp_packet(const u_char *packet, const struct pcap_pkthdr *packet_header){
+void process_ipv6_icmp_packet(struct ip6_hdr* ipv6_header, const u_char *packet, const struct pcap_pkthdr *packet_header ){
+    struct icmp6_hdr *icmp_header = (struct icmp6_hdr*)(packet + ipv6_header->ip6_ctlun.ip6_un1.ip6_un1_plen + sizeof(struct ether_header));
+
+    int icmp_header_size =  sizeof(struct ether_header) + ipv6_header->ip6_ctlun.ip6_un1.ip6_un1_plen + sizeof(icmp_header);
+
+    const u_char *packet_data = packet + icmp_header_size;
+    int packet_data_size = packet_header->len - icmp_header_size;
+
+    process_packet_data(packet_data,packet_data_size);
+}
+
+void process_ipv6_tcp_packet(struct ip6_hdr* ipv6_header, const u_char *packet, const struct pcap_pkthdr *packet_header){
+    struct tcphdr *tcp_header = (struct tcphdr*) (packet + (ipv6_header->ip6_ctlun.ip6_un1.ip6_un1_plen * 4) + sizeof(struct ether_header));
+    printf("src port : %u\n",ntohs(tcp_header->th_sport));
+    printf("dst port : %u\n",ntohs(tcp_header->th_dport));
+
+    int tcp_header_size = (ipv6_header->ip6_ctlun.ip6_un1.ip6_un1_plen * 4) + (tcp_header->th_off*4) + sizeof(struct ether_header);
+
+    const u_char *packet_data = packet + tcp_header_size;
+    int packet_data_size = packet_header->len - tcp_header_size;
+
+    process_packet_data(packet_data,packet_data_size);
+}
+
+void process_ipv6_udp_packet(struct ip6_hdr* ipv6_header, const u_char *packet, const struct pcap_pkthdr *packet_header){
+    struct udphdr *udp_header = (struct udphdr*) (packet + (ipv6_header->ip6_ctlun.ip6_un1.ip6_un1_plen * 4) + sizeof(struct ether_header));
+    printf("src port : %u\n",ntohs(udp_header->uh_sport));
+    printf("dst port : %u\n",ntohs(udp_header->uh_dport));
+
+    int udp_header_size = (ipv6_header->ip6_ctlun.ip6_un1.ip6_un1_plen * 4) + udp_header->uh_ulen + sizeof(struct ether_header);
+
+    const u_char *packet_data = packet + udp_header_size;
+    int packet_data_size = packet_header->len - udp_header_size;
+
+    process_packet_data(packet_data,packet_data_size);
+}
+
+void process_arp_packet(const u_char *packet, const struct pcap_pkthdr *packet_header){
     struct arphdr *arp_header = (struct arphdr*)(packet + sizeof(struct ether_header));
     int arp_header_size = sizeof(struct ether_header) + sizeof(arp_header);
 
@@ -354,6 +428,10 @@ void set_filters(pcap_t **sniffing_device, SnifferOptions *sniffer_options ){
         close_application(INTERNAL_ERROR);
     }
 
+    if(processed_params_count > 1 && sniffer_options->port_number != -1){
+        strcat(packet_filter,"( ");
+    }
+
     if(sniffer_options->tcp == true){
         if(processed_params_count == 1)
             strcat(packet_filter,"tcp");
@@ -385,8 +463,8 @@ void set_filters(pcap_t **sniffing_device, SnifferOptions *sniffer_options ){
     if(sniffer_options->port_number != -1){
         char tmp[MAX_LENGTH];
 
-        if(sniffer_options->parameters_count != 0)
-            sprintf(tmp,"and port %d ",sniffer_options->port_number);
+        if(processed_params_count != 0)
+            sprintf(tmp,") and port %d ",sniffer_options->port_number);
         else
             sprintf(tmp,"port %d ",sniffer_options->port_number);
 
