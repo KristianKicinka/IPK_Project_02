@@ -198,7 +198,6 @@ void proccess_sniffed_packet(u_char *args, const struct pcap_pkthdr *header, con
         printf("Arp packet\n");
         print_timestamp(header);
         process_ethernet_header(eth_header,header);
-        process_arp_packet(packet, header);
 
     }else if(ntohs(eth_header->ether_type) == ETHERTYPE_IP){
 
@@ -208,7 +207,6 @@ void proccess_sniffed_packet(u_char *args, const struct pcap_pkthdr *header, con
                 //TODO print icmp
                 printf("ICMP packet\n");
                 process_ipv4_header(ipv4_header);
-                process_ipv4_icmp_packet(ipv4_header, packet, header);
                 break;
             case TCP_PROTOCOL:
                 // TODO print tcp
@@ -234,7 +232,6 @@ void proccess_sniffed_packet(u_char *args, const struct pcap_pkthdr *header, con
             case ICMPV6_PROTOCOL:
                 printf("ICMP v6 packet\n");
                 process_ipv6_header(ipv6_header);
-                process_ipv6_icmp_packet(ipv6_header, packet, header);
                 break;
             case TCP_PROTOCOL:
                 printf("TCP v6 packet\n");
@@ -250,6 +247,7 @@ void proccess_sniffed_packet(u_char *args, const struct pcap_pkthdr *header, con
                 break;
         }
     }
+     process_packet_data(packet,header->len);
 }
 
 /**
@@ -309,41 +307,7 @@ void process_ipv6_header(struct ip6_hdr* ipv6_header){
     printf("dst IP : %s\n",ipv6_destination);
 }
 
-/**
- * @brief Funkcia zabezpečuje spracovanie IPv4 ICMP paketu
- * 
- * @param ipv4_header Štruktúra IPv4 hlavičky
- * @param packet Odchytený paket
- * @param packet_header Štruktúra hlavičky paketu
- */
-void process_ipv4_icmp_packet(struct ip* ipv4_header, const u_char *packet, const struct pcap_pkthdr *packet_header ){
 
-    struct icmp *icmp_header = (struct icmp*)(packet + ipv4_header->ip_hl + sizeof(struct ether_header));
-	int icmp_header_size =  sizeof(struct ether_header) + ipv4_header->ip_hl + sizeof(icmp_header);
-
-    const u_char *packet_data = packet + icmp_header_size;
-    int packet_data_size = packet_header->len - icmp_header_size;
-
-    process_packet_data(packet_data,packet_data_size);
-}
-
-/**
- * @brief Funkcia zabezpečuje spracovanie IPv6 ICMP paketu
- * 
- * @param ipv6_header Štruktúra IPv6 hlavičky paketu
- * @param packet Odchytený paket
- * @param packet_header Štruktúra hlavičky paketu
- */
-void process_ipv6_icmp_packet(struct ip6_hdr* ipv6_header, const u_char *packet, const struct pcap_pkthdr *packet_header ){
-    struct icmp6_hdr *icmp_header = (struct icmp6_hdr*)(packet + ipv6_header->ip6_ctlun.ip6_un1.ip6_un1_plen + sizeof(struct ether_header));
-
-    int icmp_header_size =  sizeof(struct ether_header) + sizeof(ipv6_header) + sizeof(icmp_header);
-
-    const u_char *packet_data = packet + icmp_header_size;
-    int packet_data_size = packet_header->len - icmp_header_size;
-
-    process_packet_data(packet_data,packet_data_size);
-}
 
 /**
  * @brief Funkcia zabezpečuje spracovanie IPv6 TCP paketu
@@ -357,12 +321,6 @@ void process_ipv6_tcp_packet(struct ip6_hdr* ipv6_header, const u_char *packet, 
     printf("src port : %u\n",ntohs(tcp_header->th_sport));
     printf("dst port : %u\n",ntohs(tcp_header->th_dport));
 
-    int tcp_header_size = (sizeof(ipv6_header) * 4) + (tcp_header->th_off*4) + sizeof(struct ether_header);
-
-    const u_char *packet_data = packet + tcp_header_size;
-    int packet_data_size = packet_header->len - tcp_header_size;
-
-    process_packet_data(packet_data,packet_data_size);
 }
 
 /**
@@ -376,31 +334,8 @@ void process_ipv6_udp_packet(struct ip6_hdr* ipv6_header, const u_char *packet, 
     struct udphdr *udp_header = (struct udphdr*) (packet + (ipv6_header->ip6_ctlun.ip6_un1.ip6_un1_plen * 4) + sizeof(struct ether_header));
     printf("src port : %u\n",ntohs(udp_header->uh_sport));
     printf("dst port : %u\n",ntohs(udp_header->uh_dport));
-
-    int udp_header_size = (sizeof(ipv6_header) * 4) + udp_header->uh_ulen + sizeof(struct ether_header);
-
-    const u_char *packet_data = packet + udp_header_size;
-    int packet_data_size = packet_header->len - udp_header_size;
-
-    process_packet_data(packet_data,packet_data_size);
 }
 
-/**
- * @brief Funkcia zabezpečuje spracovanie ARP paketu
- * 
- * @param packet Odchytený paket
- * @param packet_header Štruktúra hlavičky paketu
- * @link TODO: doplnit link
- */
-void process_arp_packet(const u_char *packet, const struct pcap_pkthdr *packet_header){
-    struct arphdr *arp_header = (struct arphdr*)(packet + sizeof(struct ether_header));
-    int arp_header_size = sizeof(struct ether_header) + sizeof(arp_header);
-
-    const u_char *packet_data = packet + arp_header_size;
-    int packet_data_size = packet_header->len - arp_header_size;
-
-     process_packet_data(packet_data,packet_data_size);
-}
 
 /**
  * @brief Funkcia zabezpečuje spracovanie IPv4 TCP paketu
@@ -415,12 +350,6 @@ void process_ipv4_tcp_packet(struct ip* ipv4_header, const u_char *packet, const
     printf("src port : %u\n",ntohs(tcp_header->th_sport));
     printf("dst port : %u\n",ntohs(tcp_header->th_dport));
 
-    int tcp_header_size = (ipv4_header->ip_hl * 4) + (tcp_header->th_off*4) + sizeof(struct ether_header);
-
-    const u_char *packet_data = packet + tcp_header_size;
-    int packet_data_size = packet_header->len - tcp_header_size;
-
-    process_packet_data(packet_data,packet_data_size);
 }
 
 /**
@@ -436,12 +365,6 @@ void process_ipv4_udp_packet(struct ip* ipv4_header, const u_char *packet, const
     printf("src port : %u\n",ntohs(udp_header->uh_sport));
     printf("dst port : %u\n",ntohs(udp_header->uh_dport));
 
-    int udp_header_size = (ipv4_header->ip_hl * 4) + udp_header->uh_ulen + sizeof(struct ether_header);
-
-    const u_char *packet_data = packet + udp_header_size;
-    int packet_data_size = packet_header->len - udp_header_size;
-
-    process_packet_data(packet_data,packet_data_size);
 }
 
 /**
