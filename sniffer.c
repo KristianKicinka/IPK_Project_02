@@ -539,13 +539,14 @@ void print_hexa_line(const u_char *data, int data_length, int data_offset){
  */
 void print_timestamp(const struct pcap_pkthdr *header){
     char timestamp[MAX_LENGTH];
+    char timestamp_tmp[MAX_LENGTH];
     char tmp[MAX_LENGTH];
 
     strftime(timestamp,50,"%Y-%m-%dT%H:%M:%S", localtime((&header->ts.tv_sec)));
-    sprintf(timestamp,"%s.%.03d",timestamp, (int) header->ts.tv_usec/1000);
+    sprintf(timestamp_tmp,"%s.%.03d",timestamp, (int) header->ts.tv_usec/1000);
     strftime(tmp,50,"%z",localtime((&header->ts.tv_sec)));
-    strcat(timestamp,tmp);
-    printf("timestamp : %s\n",timestamp);
+    strcat(timestamp_tmp,tmp);
+    printf("timestamp : %s\n",timestamp_tmp);
 }
 
 /**
