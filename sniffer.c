@@ -539,7 +539,7 @@ void print_hexa_line(const u_char *data, int data_length, int data_offset){
  */
 void print_timestamp(const struct pcap_pkthdr *header){
     char timestamp[MAX_LENGTH];
-    char timestamp_tmp[MAX_LENGTH];
+    char timestamp_tmp[MAX_LENGTH*2];
     char tmp[MAX_LENGTH];
 
     strftime(timestamp,50,"%Y-%m-%dT%H:%M:%S", localtime((&header->ts.tv_sec)));
