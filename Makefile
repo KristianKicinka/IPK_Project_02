@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Wall -std=gnu99 -ggdb3 -lpcap
+CFLAGS=-Wall -std=c11 -pedantic -ggdb3 -g
 FILES= sniffer.c
 
 .PHONY: ipk-sniffer clean
