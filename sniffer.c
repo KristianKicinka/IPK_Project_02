@@ -494,7 +494,7 @@ void set_filters(pcap_t **sniffing_device, SnifferOptions *sniffer_options ){
 
     if(sniffer_options->tcp == true){
         if(processed_params_count == 1)
-            strcat(packet_filter,"tcp");
+            strcat(packet_filter,"tcp ");
         else
             strcat(packet_filter,"tcp or ");
         processed_params_count--;
@@ -508,7 +508,7 @@ void set_filters(pcap_t **sniffing_device, SnifferOptions *sniffer_options ){
     }
     if(sniffer_options->arp == true){
         if(processed_params_count == 1)
-            strcat(packet_filter,"arp");
+            strcat(packet_filter,"arp ");
         else
             strcat(packet_filter,"arp or ");
         processed_params_count--;
@@ -523,10 +523,10 @@ void set_filters(pcap_t **sniffing_device, SnifferOptions *sniffer_options ){
     if(sniffer_options->port_number != -1){
         char tmp[MAX_LENGTH];
 
-        if(processed_params_count != 0)
+        if(sniffer_options->parameters_count > 1)
             sprintf(tmp,") and port %d ",sniffer_options->port_number);
         else
-            sprintf(tmp," port %d ",sniffer_options->port_number);
+            sprintf(tmp,"port %d ",sniffer_options->port_number);
 
         strcat(packet_filter,tmp);
     }
