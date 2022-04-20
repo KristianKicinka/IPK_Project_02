@@ -191,41 +191,41 @@ void proccess_sniffed_packet(u_char *args, const struct pcap_pkthdr *header, con
     struct ether_header *eth_header;
     eth_header = (struct ether_header *) packet;
 
-    print_timestamp(header);
-    process_ethernet_header(eth_header,header);
-
     if(ntohs(eth_header->ether_type) == ETHERTYPE_ARP){
-        printf("Arp packet\n");
+        printf("ARP packet\n");
         print_timestamp(header);
         process_ethernet_header(eth_header,header);
 
     }else if(ntohs(eth_header->ether_type) == ETHERTYPE_IP){
 
+        print_timestamp(header);
+        process_ethernet_header(eth_header,header);
+
         struct ip *ipv4_header = (struct ip*) (packet + sizeof(struct ether_header));  // on linux rename ip to iphdr and ether_addr to ethhdr
         switch (ipv4_header->ip_p){
             case ICMPV4_PROTOCOL:
-                //TODO print icmp
                 printf("ICMP packet\n");
                 process_ipv4_header(ipv4_header);
                 break;
             case TCP_PROTOCOL:
-                // TODO print tcp
                 printf("TCP packet\n");
                 process_ipv4_header(ipv4_header);
                 process_ipv4_tcp_packet(ipv4_header, packet, header);
                 break;
             case UDP_PROTOCOL:
-                // TODO print udp protocol
                 printf("UDP packet\n");
                 process_ipv4_header(ipv4_header);
                 process_ipv4_udp_packet(ipv4_header, packet, header);
                 break;
             default:
-                //printf("Other protocol\n");
                 break;
         }
 
     }else if(ntohs(eth_header->ether_type) == ETHERTYPE_IPV6){
+        
+        print_timestamp(header);
+        process_ethernet_header(eth_header,header);
+
         struct ip6_hdr *ipv6_header = (struct ip6_hdr *) (packet + sizeof(struct ether_header));
 
         switch (ipv6_header->ip6_ctlun.ip6_un1.ip6_un1_nxt){
@@ -530,6 +530,10 @@ void set_filters(pcap_t **sniffing_device, SnifferOptions *sniffer_options ){
 
         strcat(packet_filter,tmp);
     }
+
+    // Zlé nastavenie filtrov
+    if(( sniffer_options->arp == true || sniffer_options->icmp == true ) && sniffer_options->port_number != -1 )
+        packet_filter = "";
 
     printf("Filter string : %s\n",packet_filter);
 
