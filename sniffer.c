@@ -602,7 +602,7 @@ void set_filters(pcap_t **sniffing_device, SnifferOptions *sniffer_options ){
         if(processed_params_count != 0)
             sprintf(tmp,") and port %d ",sniffer_options->port_number);
         else
-            sprintf(tmp,"port %d ",sniffer_options->port_number);
+            sprintf(tmp," port %d ",sniffer_options->port_number);
 
         strcat(packet_filter,tmp);
     }
