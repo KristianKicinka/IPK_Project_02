@@ -62,7 +62,7 @@ void initialize_sniffer_options(SnifferOptions *sniffer_options){
  * @link Code source : https://www.itnetwork.cz/cecko/linux/cecko-a-linux-getopt-long-a-shell
  */
 void check_arguments(int argc, char *argv[], SnifferOptions *sniffer_options){
-    if (argc>1){
+    if (argc > 1){
         int character;
         while ((character = getopt_long(argc, argv, "i::p::tun::", long_options, NULL)) != -1){
             switch (character){
