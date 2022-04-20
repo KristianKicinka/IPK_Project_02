@@ -96,7 +96,7 @@ void list_available_devices( SnifferOptions *sniffer_options);
 void print_available_devices(SnifferOptions *sniffer_options);
 void select_sniffing_device(pcap_t **sniffing_device, SnifferOptions *sniffer_options );
 void set_filters(pcap_t **sniffing_device, SnifferOptions *sniffer_options );
-void proccess_sniffed_packet(const struct pcap_pkthdr *header, const u_char *packet);
+void proccess_sniffed_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *packet);
 void process_ethernet_header(struct ether_header* eth_header, const struct pcap_pkthdr *header);
 void print_timestamp(const struct pcap_pkthdr *header);
 

@@ -186,7 +186,7 @@ void select_sniffing_device(pcap_t **sniffing_device, SnifferOptions *sniffer_op
  * @param header Štruktúra hlavičky paketu
  * @param packet Odchytený paket
  */
-void proccess_sniffed_packet(const struct pcap_pkthdr *header, const u_char *packet){
+void proccess_sniffed_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *packet){
     
     struct ether_header *eth_header;
     eth_header = (struct ether_header *) packet;
@@ -299,8 +299,8 @@ void process_ipv6_header(struct ip6_hdr* ipv6_header){
     struct sockaddr_in6 ip6_source, ip6_destination;
     char ipv6_source[INET6_ADDRSTRLEN], ipv6_destination[INET6_ADDRSTRLEN];
 
-    ip6_source.sin6_addr.__u6_addr = ipv6_header->ip6_src.__u6_addr;
-    ip6_destination.sin6_addr.__u6_addr = ipv6_header->ip6_dst.__u6_addr;
+    ip6_source.sin6_addr = ipv6_header->ip6_src;
+    ip6_destination.sin6_addr = ipv6_header->ip6_dst;
 
     inet_ntop(AF_INET6,&(ip6_source.sin6_addr),ipv6_source,INET6_ADDRSTRLEN);
     inet_ntop(AF_INET6,&(ip6_destination.sin6_addr),ipv6_destination,INET6_ADDRSTRLEN);
@@ -542,7 +542,7 @@ void print_timestamp(const struct pcap_pkthdr *header){
     char tmp[MAX_LENGTH];
 
     strftime(timestamp,50,"%Y-%m-%dT%H:%M:%S", localtime((&header->ts.tv_sec)));
-    sprintf(timestamp,"%s.%.03d",timestamp, header->ts.tv_usec/1000);
+    sprintf(timestamp,"%s.%.03ld",timestamp, header->ts.tv_usec/1000);
     strftime(tmp,50,"%z",localtime((&header->ts.tv_sec)));
     sprintf(timestamp,"%s%s",timestamp,tmp);
     printf("timestamp : %s\n",timestamp);
