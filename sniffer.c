@@ -7,7 +7,7 @@
  * @param argc Počet argumentov skriptu
  * @param argv Pole argumentov skriptu
  * @return int Návratový kód
- * @link Code source : https://www.binarytides.com/packet-sniffer-code-c-libpcap-linux-sockets/
+ * @link Zdroj : https://www.binarytides.com/packet-sniffer-code-c-libpcap-linux-sockets/
  */
 int main(int argc, char *argv[]){
 
@@ -59,7 +59,7 @@ void initialize_sniffer_options(SnifferOptions *sniffer_options){
  * @param argc Počet argumentov skriptu
  * @param argv Pole argumentov skriptu
  * @param sniffer_options Konfiguračná štruktúra
- * @link Code source : https://www.itnetwork.cz/cecko/linux/cecko-a-linux-getopt-long-a-shell
+ * @link Zdroj : https://www.itnetwork.cz/cecko/linux/cecko-a-linux-getopt-long-a-shell
  */
 void check_arguments(int argc, char *argv[], SnifferOptions *sniffer_options){
     if (argc > 1){
@@ -117,7 +117,7 @@ void check_arguments(int argc, char *argv[], SnifferOptions *sniffer_options){
  * @brief Funkcia zabezpečuje vyhľadanie a uloženie možných sniffovacích rozhraní
  * 
  * @param sniffer_options Konfiguračná štruktúra
- * @link Code source : https://www.binarytides.com/packet-sniffer-code-c-libpcap-linux-sockets/
+ * @link Zdroj : https://www.binarytides.com/packet-sniffer-code-c-libpcap-linux-sockets/
  */
 void list_available_devices( SnifferOptions *sniffer_options){
     pcap_if_t *all_devices, *device;
@@ -155,8 +155,8 @@ void print_available_devices(SnifferOptions *sniffer_options){
  * 
  * @param sniffing_device Štruktúra odpočúvacieho rozhrania
  * @param sniffer_options Konfiguračná štruktúra
- * @link Code source : https://www.devdungeon.com/content/using-libpcap-c
- *                     https://www.binarytides.com/packet-sniffer-code-c-libpcap-linux-sockets/
+ * @link Zdroj : https://www.devdungeon.com/content/using-libpcap-c
+ *               https://www.binarytides.com/packet-sniffer-code-c-libpcap-linux-sockets/
  */
 void select_sniffing_device(pcap_t **sniffing_device, SnifferOptions *sniffer_options ){
     char err_buffer[MAX_LENGTH];
@@ -185,6 +185,7 @@ void select_sniffing_device(pcap_t **sniffing_device, SnifferOptions *sniffer_op
  *
  * @param header Štruktúra hlavičky paketu
  * @param packet Odchytený paket
+ * @link Zdroj : https://www.binarytides.com/packet-sniffer-code-c-libpcap-linux-sockets/
  */
 void proccess_sniffed_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *packet){
     
@@ -255,7 +256,7 @@ void proccess_sniffed_packet(u_char *args, const struct pcap_pkthdr *header, con
  * 
  * @param eth_header Štruktúra Ethernet hlavičky
  * @param header Štruktúra hlavičky paketu
- * @link Code source : https://www.binarytides.com/packet-sniffer-code-c-libpcap-linux-sockets/
+ * @link Zdroj : https://www.binarytides.com/packet-sniffer-code-c-libpcap-linux-sockets/
  */
 void process_ethernet_header(struct ether_header* eth_header, const struct pcap_pkthdr *header){
 
@@ -274,7 +275,7 @@ void process_ethernet_header(struct ether_header* eth_header, const struct pcap_
  * @brief Funkcia zabezpečuje spracovanie IPv4 hlavičky
  * 
  * @param ipv4_header Štruktúra IPv4 hlavičky
- * @link Code source : https://www.binarytides.com/packet-sniffer-code-c-libpcap-linux-sockets/
+ * @link Zdroj : https://www.binarytides.com/packet-sniffer-code-c-libpcap-linux-sockets/
  */
 void process_ipv4_header(struct ip* ipv4_header){
     struct sockaddr_in ip_source, ip_destination;
@@ -291,7 +292,7 @@ void process_ipv4_header(struct ip* ipv4_header){
  * @brief Funkcia zabezpečuje spracovanie IPv6 hlavičky
  * 
  * @param ipv6_header 
- * @link Code source : https://gist.github.com/q2hide/244bf94d3b72cc17d9ca
+ * @link Zdroj : https://gist.github.com/q2hide/244bf94d3b72cc17d9ca
  */
 void process_ipv6_header(struct ip6_hdr* ipv6_header){
     struct sockaddr_in6 ip6_source, ip6_destination;
@@ -343,7 +344,7 @@ void process_ipv6_udp_packet(struct ip6_hdr* ipv6_header, const u_char *packet, 
  * @param ipv4_header Štruktúra IPv4 hlavičky paketu
  * @param packet Odchytený paket
  * @param packet_header Štruktúra hlavičky paketu
- * @link Code source : https://www.binarytides.com/packet-sniffer-code-c-libpcap-linux-sockets/
+ * @link Zdroj : https://www.binarytides.com/packet-sniffer-code-c-libpcap-linux-sockets/
  */
 void process_ipv4_tcp_packet(struct ip* ipv4_header, const u_char *packet, const struct pcap_pkthdr *packet_header){
     struct tcphdr *tcp_header = (struct tcphdr*) (packet + (ipv4_header->ip_hl * 4) + sizeof(struct ether_header));
@@ -358,7 +359,7 @@ void process_ipv4_tcp_packet(struct ip* ipv4_header, const u_char *packet, const
  * @param ipv4_header Štruktúra IPv4 hlavičky paketu
  * @param packet  Odchytený paket
  * @param packet_header Štruktúra hlavičky paketu
- * @link Code source : https://www.binarytides.com/packet-sniffer-code-c-libpcap-linux-sockets/
+ * @link Zdroj : https://www.binarytides.com/packet-sniffer-code-c-libpcap-linux-sockets/
  */
 void process_ipv4_udp_packet(struct ip* ipv4_header, const u_char *packet, const struct pcap_pkthdr *packet_header){
     struct udphdr *udp_header = (struct udphdr*) (packet + (ipv4_header->ip_hl * 4) + sizeof(struct ether_header));
@@ -372,7 +373,7 @@ void process_ipv4_udp_packet(struct ip* ipv4_header, const u_char *packet, const
  * 
  * @param data Dáta paketu
  * @param data_size Veľkosť dát
- * @link Code source https://www.tcpdump.org/other/sniffex.c
+ * @link Zdroj https://www.tcpdump.org/other/sniffex.c
  */
 void process_packet_data(const u_char *data, int data_size){
     int length_remaining = data_size;
@@ -410,7 +411,7 @@ void process_packet_data(const u_char *data, int data_size){
  * @param data Dáta určené na zobrazenie
  * @param data_length Dĺžka dát
  * @param data_offset Odstup dát
- * @link Code source https://www.tcpdump.org/other/sniffex.c
+ * @link Zdroj https://www.tcpdump.org/other/sniffex.c
  */
 void print_hexa_line(const u_char *data, int data_length, int data_offset){
     const u_char *data_array;
@@ -458,7 +459,7 @@ void print_hexa_line(const u_char *data, int data_length, int data_offset){
  * @brief Funkcia zabezpečuje výpis časových značiek
  * 
  * @param header Štruktúra hlavičky paketu
- * @link Code source : https://stackoverflow.com/questions/3673226/how-to-print-time-in-format-2009-08-10-181754-811
+ * @link Zdroj : https://stackoverflow.com/questions/3673226/how-to-print-time-in-format-2009-08-10-181754-811
  */
 void print_timestamp(const struct pcap_pkthdr *header){
     char timestamp[MAX_LENGTH];
@@ -477,7 +478,7 @@ void print_timestamp(const struct pcap_pkthdr *header){
  * 
  * @param sniffing_device Štruktúra odpočúvacieho rozhrania
  * @param sniffer_options Konfiguračná štruktúra
- * @link Code source : https://www.devdungeon.com/content/using-libpcap-c
+ * @link Zdroj : https://www.devdungeon.com/content/using-libpcap-c
  */
 void set_filters(pcap_t **sniffing_device, SnifferOptions *sniffer_options ){
     struct bpf_program filter;
