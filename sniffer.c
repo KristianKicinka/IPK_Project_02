@@ -542,7 +542,7 @@ void print_timestamp(const struct pcap_pkthdr *header){
     char tmp[MAX_LENGTH];
 
     strftime(timestamp,50,"%Y-%m-%dT%H:%M:%S", localtime((&header->ts.tv_sec)));
-    sprintf(timestamp,"%s.%.03ld",timestamp, header->ts.tv_usec/1000);
+    sprintf(timestamp,"%s.%.03d",timestamp, header->ts.tv_usec/1000);
     strftime(tmp,50,"%z",localtime((&header->ts.tv_sec)));
     sprintf(timestamp,"%s%s",timestamp,tmp);
     printf("timestamp : %s\n",timestamp);
