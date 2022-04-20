@@ -35,11 +35,12 @@
 #define MAX_LENGTH 1024
 #define LINE_WIDTH 16
 
-#define ICMP_PROTOCOL 1
+#define ICMPV4_PROTOCOL 1
 #define IPV4_PROTOCOL 4
 #define TCP_PROTOCOL 6
 #define UDP_PROTOCOL 17
 #define IPV6_PROTOCOL 41
+#define ICMPV6_PROTOCOL 58 
 
 typedef struct sniffer_options_t{
     char *interface;
@@ -54,6 +55,8 @@ typedef struct sniffer_options_t{
     int packet_count;
 }SnifferOptions;
 
+// Struct source : https://stackoverflow.com/questions/7489093/getopt-long-proper-way-to-use-it
+//                 https://www.itnetwork.cz/cecko/linux/cecko-a-linux-getopt-long-a-shell
 struct option long_options[] = {
     {"interface", optional_argument, NULL, 'i'},
     {"tcp", no_argument, NULL, 't'},
@@ -69,17 +72,18 @@ struct option long_options[] = {
 // https://stackoverflow.com/questions/7489093/getopt-long-proper-way-to-use-it
 // https://www.gnu.org/software/libc/manual/html_node/Getopt-Long-Options.html
 // https://www.itnetwork.cz/cecko/linux/cecko-a-linux-getopt-long-a-shell
-// https://www.tcpdump.org/manpages/pcap.3pcap.html
-// https://www.tcpdump.org/manpages/pcap_loop.3pcap.html
-// https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml
+// t https://www.tcpdump.org/manpages/pcap.3pcap.html
+// t https://www.tcpdump.org/manpages/pcap_loop.3pcap.html
+// t https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml
 // https://www.devdungeon.com/content/using-libpcap-c
 // vypis : https://www.tcpdump.org/other/sniffex.c
 // https://stackoverflow.com/questions/3464194/how-can-i-convert-an-integer-to-a-hexadecimal-string-in-c
-// http://osr600doc.xinuos.com/en/SDK_netapi/sockC.TheIPv6sockaddrstructure.html
-// https://gist.github.com/q2hide/244bf94d3b72cc17d9ca
-// https://www.geeksforgeeks.org/internet-protocol-version-6-ipv6-header/
+// t http://osr600doc.xinuos.com/en/SDK_netapi/sockC.TheIPv6sockaddrstructure.html
+// https://gist.github.com/q2hide/244bf94d3b72cc17d9ca najst
+// t https://www.geeksforgeeks.org/internet-protocol-version-6-ipv6-header/
 // https://blog.luukhendriks.eu/2015/11/05/libpcap-printing-ipv6-flow-labels.html
 
+// Zdroj makra : https://stackoverflow.com/questions/1052746/getopt-does-not-parse-optional-arguments-to-parameters
 #define OPTIONAL_ARGUMENT_IS_PRESENT \
     ((optarg == NULL && optind < argc && argv[optind][0] != '-') \
      ? (bool) (optarg = argv[optind++]) \
@@ -92,7 +96,7 @@ void list_available_devices( SnifferOptions *sniffer_options);
 void print_available_devices(SnifferOptions *sniffer_options);
 void select_sniffing_device(pcap_t **sniffing_device, SnifferOptions *sniffer_options );
 void set_filters(pcap_t **sniffing_device, SnifferOptions *sniffer_options );
-void proccess_sniffed_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *packet);
+void proccess_sniffed_packet(const struct pcap_pkthdr *header, const u_char *packet);
 void process_ethernet_header(struct ether_header* eth_header, const struct pcap_pkthdr *header);
 void print_timestamp(const struct pcap_pkthdr *header);
 
