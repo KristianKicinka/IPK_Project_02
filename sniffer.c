@@ -260,11 +260,11 @@ void proccess_sniffed_packet(u_char *args, const struct pcap_pkthdr *header, con
  */
 void process_ethernet_header(struct ether_header* eth_header, const struct pcap_pkthdr *header){
 
-    printf("src MAC : %.2x-%.2x-%.2x-%.2x-%.2x-%.2x \n",
+    printf("src MAC : %.2x:%.2x:%.2x:%.2x:%.2x:%.2x \n",
         eth_header->ether_shost[0],eth_header->ether_shost[1],eth_header->ether_shost[2],
         eth_header->ether_shost[3],eth_header->ether_shost[4],eth_header->ether_shost[5]
         );
-    printf("dst MAC : %.2x-%.2x-%.2x-%.2x-%.2x-%.2x \n",
+    printf("dst MAC : %.2x:%.2x:%.2x:%.2x:%.2x:%.2x \n",
         eth_header->ether_dhost[0],eth_header->ether_dhost[1],eth_header->ether_dhost[2],
         eth_header->ether_dhost[3],eth_header->ether_dhost[4],eth_header->ether_dhost[5]
     );
