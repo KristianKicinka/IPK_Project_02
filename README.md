@@ -21,7 +21,7 @@ Príkaz :
 ```
 Výstup programu:
 
-```bash
+```
 timestamp : 2022-04-21T13:00:56.399+02:00
 src MAC : a0:78:17:8f:0f:0a 
 dst MAC : dc:ef:80:56:4b:8e 
