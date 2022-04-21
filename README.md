@@ -11,7 +11,7 @@ make
 
 ## Princíp spustenia programu
 ```bash
-./ipk-sniffer [-i rozhraní | --interface rozhranie] {-p ­­port} {[--tcp|-t] [--udp|-u] [--arp] [--icmp] } {-n num}
+./ipk-sniffer [-i rozhranie | --interface rozhranie] {-p ­­port} {[--tcp|-t] [--udp|-u] [--arp] [--icmp] } {-n num}
 ```
 
 ## Ukázkový príklad spustenia programu
