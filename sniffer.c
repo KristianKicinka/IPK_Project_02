@@ -578,12 +578,12 @@ void set_filters(pcap_t **sniffing_device, SnifferOptions *sniffer_options ){
  */
 void help_function(){
     printf("IPK Projekt 2 (Varianta ZETA: Sniffer paketů)\n");
-    printf("\t--tcp\t Zachytávnie TCP paketov (IPv4 a IPv6)\n");
-    printf("\t--udp\t Zachytávnie UDP paketov (IPv4 a IPv6)\n");
-    printf("\t--icmp\t Zachytávnie ICMP a ICMPv6 paketov\n");
-    printf("\t--arp\t Zachytávnie ARP paketov\n");
-    printf("\t-n\t Celkový počet paketov určených k zachyteniu\n");
-    printf("\t-n\t Celkový počet paketov určených k zachyteniu\n");
+    printf("  [ --tcp | -t ]\tZachytávnie TCP paketov (IPv4 a IPv6)\n");
+    printf("  [ --udp | -u ]\tZachytávnie UDP paketov (IPv4 a IPv6)\n");
+    printf("  --icmp\t\tZachytávnie ICMP a ICMPv6 paketov\n");
+    printf("  --arp\t\t\tZachytávnie ARP paketov\n");
+    printf("  -n number\t\tCelkový počet paketov určených k zachyteniu\n");
+    printf("  -p port\t\tFilter portu\n");
     close_application(CORRECT_CLOSE);
 }
 
