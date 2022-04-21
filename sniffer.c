@@ -18,6 +18,7 @@ int main(int argc, char *argv[]){
     list_available_devices(&sniffer_options);
     check_arguments(argc,argv, &sniffer_options);
 
+    /*
     printf("interface : %s\n",sniffer_options.interface);
     printf("port number : %d\n",sniffer_options.port_number);
     printf("count of parameters : %d\n",sniffer_options.parameters_count);
@@ -26,11 +27,12 @@ int main(int argc, char *argv[]){
     printf("udp : %d\n",sniffer_options.udp);
     printf("tcp : %d\n",sniffer_options.tcp);    
     printf("packets count : %d\n",sniffer_options.packet_count);
+    */
 
     select_sniffing_device(&sniffing_device,&sniffer_options);
     set_filters(&sniffing_device, &sniffer_options);
 
-    pcap_loop(sniffing_device, sniffer_options.packet_count, proccess_sniffed_packet, NULL); // Calling sniffing loop
+    pcap_loop(sniffing_device, sniffer_options.packet_count, proccess_sniffed_packet, NULL);
 
     pcap_close(sniffing_device);
 
@@ -161,7 +163,7 @@ void list_available_devices( SnifferOptions *sniffer_options){
  * @param sniffer_options Konfiguračná štruktúra
  */
 void print_available_devices(SnifferOptions *sniffer_options){
-    printf("List of available devices :\n");
+    printf("Zoznam dostupných zriadení :\n");
     for (int i = 0; i < sniffer_options->devices_count; i++){
         printf("%d\t%s\n", i+1, sniffer_options->device_names[i]);
     }
@@ -211,7 +213,7 @@ void proccess_sniffed_packet(u_char *args, const struct pcap_pkthdr *header, con
     eth_header = (struct ether_header *) packet;
 
     if(ntohs(eth_header->ether_type) == ETHERTYPE_ARP){
-        printf("ARP packet\n");
+        //printf("ARP packet\n");
         print_timestamp(header);
         process_ethernet_header(eth_header,header);
 
@@ -223,16 +225,16 @@ void proccess_sniffed_packet(u_char *args, const struct pcap_pkthdr *header, con
         struct ip *ipv4_header = (struct ip*) (packet + sizeof(struct ether_header));  // on linux rename ip to iphdr and ether_addr to ethhdr
         switch (ipv4_header->ip_p){
             case ICMPV4_PROTOCOL:
-                printf("ICMP packet\n");
+                //printf("ICMP packet\n");
                 process_ipv4_header(ipv4_header);
                 break;
             case TCP_PROTOCOL:
-                printf("TCP packet\n");
+                //printf("TCP packet\n");
                 process_ipv4_header(ipv4_header);
                 process_ipv4_tcp_packet(ipv4_header, packet, header);
                 break;
             case UDP_PROTOCOL:
-                printf("UDP packet\n");
+                //printf("UDP packet\n");
                 process_ipv4_header(ipv4_header);
                 process_ipv4_udp_packet(ipv4_header, packet, header);
                 break;
@@ -249,16 +251,16 @@ void proccess_sniffed_packet(u_char *args, const struct pcap_pkthdr *header, con
 
         switch (ipv6_header->ip6_ctlun.ip6_un1.ip6_un1_nxt){
             case ICMPV6_PROTOCOL:
-                printf("ICMP v6 packet\n");
+                //printf("ICMP v6 packet\n");
                 process_ipv6_header(ipv6_header);
                 break;
             case TCP_PROTOCOL:
-                printf("TCP v6 packet\n");
+                //printf("TCP v6 packet\n");
                 process_ipv6_header(ipv6_header);
                 process_ipv6_tcp_packet(ipv6_header, packet, header);
                 break;
             case UDP_PROTOCOL:
-                printf("UDP v6 packet\n");
+                //printf("UDP v6 packet\n");
                 process_ipv6_header(ipv6_header);
                 process_ipv6_udp_packet(ipv6_header, packet, header);
                 break;
@@ -560,7 +562,7 @@ void set_filters(pcap_t **sniffing_device, SnifferOptions *sniffer_options ){
     if(( sniffer_options->arp == true || sniffer_options->icmp == true ) && sniffer_options->port_number != -1 )
         packet_filter = "";
 
-    printf("Filter string : %s\n",packet_filter);
+    //printf("Filter string : %s\n",packet_filter);
 
     if (pcap_compile((*sniffing_device), &filter, packet_filter, 0, PCAP_NETMASK_UNKNOWN ) == -1) {
         close_application(SNIFFER_FILTER_ERROR);
