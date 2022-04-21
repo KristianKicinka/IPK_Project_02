@@ -1,6 +1,7 @@
 # IPK Projekt 2 (Varianta ZETA: Sniffer paketů)
-## Sieťový analyzátor implementovaný v jazyku C
-Cieľom projektu je vytvoriť program, ktorý slúži na analýzu sieťovej prevádzky na sieti. Program je implementovaný v jazyku C.
+
+## Stručný popis programu
+Cieľom projektu bolo vytvoriť program, ktorý slúži na analýzu sieťovej prevádzky na sieti. Program je implementovaný v jazyku C. Po preložení a spustení programu s platnými atribútmi program pristupuje k analýze sieťovej prevádzky. Používateľ má možnosť zvoliť typ paketov, ktoré chce zachytávať ale aj rozhranie, na ktorom má program odpočúvať komunikáciu. Pokiaľ používateľ zvolí neplatnú konfiguráciu filtrov, nedôjde k ukončeniu činnosti programu. Analyzátor bude spracúvať a odpočúvať komunikáciu akéhokoľvek druhu.
 
 ## Build
 Pred prvotným spustením programu je nutné vykonať preloženie bináriek príkazom make.
@@ -39,4 +40,10 @@ dst port : 443
 0x0060: a4 ea 7f 2e 14 f7 4f c3  a4 e9 80 f1              ......O.....
 ```
 
+## Zoznam odovzdaných súborov
 
+* sniffer.c
+* sniffer.h
+* Makefile
+* README.md
+* manual.pdf

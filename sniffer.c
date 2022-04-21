@@ -562,14 +562,14 @@ void set_filters(pcap_t **sniffing_device, SnifferOptions *sniffer_options ){
 void close_application (int exit_code){
     switch (exit_code){
         case ARG_ERROR:
-            fprintf(stderr,"Argument error!\n");
+            fprintf(stderr,"Chyba argumentov!\n");
             exit(ARG_ERROR);
             break;
         case INTERNAL_ERROR:
-            fprintf(stderr,"Internl error!\n");
+            fprintf(stderr,"Interná chyba!\n");
             exit(INTERNAL_ERROR);
         case SNIFFER_FILTER_ERROR:
-            fprintf(stderr,"Sniffer filter settings error!\n");
+            fprintf(stderr,"Chyba nastavenia filtrov!\n");
             exit(SNIFFER_FILTER_ERROR);
             break;
         case CORRECT_CLOSE:
