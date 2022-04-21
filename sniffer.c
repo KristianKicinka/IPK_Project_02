@@ -64,7 +64,7 @@ void initialize_sniffer_options(SnifferOptions *sniffer_options){
 void check_arguments(int argc, char *argv[], SnifferOptions *sniffer_options){
     if (argc > 1){
         int character;
-        while ((character = getopt_long(argc, argv, "i::p::tun::", long_options, NULL)) != -1){
+        while ((character = getopt_long(argc, argv, ":i::p::tun::", long_options, NULL)) != -1){
             switch (character){
                 case 'i':
                     if(OPTIONAL_ARGUMENT_IS_PRESENT){
@@ -79,6 +79,8 @@ void check_arguments(int argc, char *argv[], SnifferOptions *sniffer_options){
                         char *ptr;
                         int port_number = strtol(optarg, &ptr, 10);
                         sniffer_options->port_number = port_number;
+                    }else{
+                        close_application(ARG_ERROR);
                     }
                     break;}
                 case 't':
@@ -102,9 +104,19 @@ void check_arguments(int argc, char *argv[], SnifferOptions *sniffer_options){
                         char *ptr;
                         int packet_count = strtol(optarg, &ptr, 10);
                         sniffer_options->packet_count = packet_count;
+                    }else{
+                        close_application(ARG_ERROR);
                     }
                     break;}
-                
+                case 'h':
+                    help_function();
+                    break;
+
+                case ':':
+                case '?':
+                default:
+                    close_application(ARG_ERROR);
+                    break;
                 }
             }
     }else{
@@ -552,6 +564,15 @@ void set_filters(pcap_t **sniffing_device, SnifferOptions *sniffer_options ){
         close_application(SNIFFER_FILTER_ERROR);
     }
 
+}
+
+/**
+ * @brief Funkcia zabezpečuje výpis nápovedy programu
+ * 
+ */
+void help_function(){
+    printf("help function\n");
+    close_application(CORRECT_CLOSE);
 }
 
 /**

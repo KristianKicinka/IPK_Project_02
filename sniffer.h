@@ -64,6 +64,7 @@ struct option long_options[] = {
     {"arp", no_argument, NULL, 'a'},
     {"icmp", no_argument, NULL, 'c'},
     {"num", required_argument, NULL, 'n'},
+    {"help", no_argument, NULL, 'h'},
     { NULL, 0, NULL, 0}
 };
 
@@ -99,6 +100,7 @@ void set_filters(pcap_t **sniffing_device, SnifferOptions *sniffer_options );
 void proccess_sniffed_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *packet);
 void process_ethernet_header(struct ether_header* eth_header, const struct pcap_pkthdr *header);
 void print_timestamp(const struct pcap_pkthdr *header);
+void help_function();
 
 // IPV4
 void process_ipv4_header(struct ip* ipv4_header);
