@@ -78,7 +78,10 @@ void check_arguments(int argc, char *argv[], SnifferOptions *sniffer_options){
                     if(OPTIONAL_ARGUMENT_IS_PRESENT){
                         char *ptr;
                         int port_number = strtol(optarg, &ptr, 10);
-                        sniffer_options->port_number = port_number;
+                        if (*ptr == '\0')
+                            sniffer_options->port_number = port_number;
+                        else
+                            close_application(ARG_ERROR);
                     }else{
                         close_application(ARG_ERROR);
                     }
@@ -103,7 +106,10 @@ void check_arguments(int argc, char *argv[], SnifferOptions *sniffer_options){
                     if(OPTIONAL_ARGUMENT_IS_PRESENT){
                         char *ptr;
                         int packet_count = strtol(optarg, &ptr, 10);
-                        sniffer_options->packet_count = packet_count;
+                        if(*ptr == '\0')
+                            sniffer_options->packet_count = packet_count;
+                        else
+                            close_application(ARG_ERROR);
                     }else{
                         close_application(ARG_ERROR);
                     }
@@ -571,7 +577,13 @@ void set_filters(pcap_t **sniffing_device, SnifferOptions *sniffer_options ){
  * 
  */
 void help_function(){
-    printf("help function\n");
+    printf("IPK Projekt 2 (Varianta ZETA: Sniffer paketů)\n");
+    printf("\t--tcp\t Zachytávnie TCP paketov (IPv4 a IPv6)\n");
+    printf("\t--udp\t Zachytávnie UDP paketov (IPv4 a IPv6)\n");
+    printf("\t--icmp\t Zachytávnie ICMP a ICMPv6 paketov\n");
+    printf("\t--arp\t Zachytávnie ARP paketov\n");
+    printf("\t-n\t Celkový počet paketov určených k zachyteniu\n");
+    printf("\t-n\t Celkový počet paketov určených k zachyteniu\n");
     close_application(CORRECT_CLOSE);
 }
 

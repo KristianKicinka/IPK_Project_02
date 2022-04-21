@@ -63,7 +63,6 @@ struct option long_options[] = {
     {"udp", no_argument, NULL, 'u'},
     {"arp", no_argument, NULL, 'a'},
     {"icmp", no_argument, NULL, 'c'},
-    {"num", required_argument, NULL, 'n'},
     {"help", no_argument, NULL, 'h'},
     { NULL, 0, NULL, 0}
 };
