@@ -55,8 +55,16 @@ typedef struct sniffer_options_t{
     int packet_count;
 }SnifferOptions;
 
-// Struct source : https://stackoverflow.com/questions/7489093/getopt-long-proper-way-to-use-it
-//                 https://www.itnetwork.cz/cecko/linux/cecko-a-linux-getopt-long-a-shell
+/**
+ * @link Zdroj : c - getopt_long() -- proper way to use it? - Stack Overflow. 
+ *               Stack Overflow - Where Developers Learn, Share, & Build Careers [online].
+ *               Dostupné z: https://stackoverflow.com/questions/7489093/getopt-long-proper-way-to-use-it
+ * 
+ *               Lekce 8 - Céčko a Linux - getopt_long a shell. itnetwork.cz - Učíme národ IT [online]. 
+ *               Copyright © 2022 itnetwork.cz. Veškerý obsah webu [cit. 22.04.2022]. 
+ *               Dostupné z: https://www.itnetwork.cz/cecko/linux/cecko-a-linux-getopt-long-a-shell
+ * 
+ */
 struct option long_options[] = {
     {"interface", optional_argument, NULL, 'i'},
     {"tcp", no_argument, NULL, 't'},
