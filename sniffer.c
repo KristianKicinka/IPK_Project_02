@@ -241,7 +241,7 @@ void proccess_sniffed_packet(u_char *args, const struct pcap_pkthdr *header, con
         print_timestamp(header);
         process_ethernet_header(eth_header,header);
 
-        struct ip *ipv4_header = (struct ip*) (packet + sizeof(struct ether_header));  // on linux rename ip to iphdr and ether_addr to ethhdr
+        struct ip *ipv4_header = (struct ip*) (packet + sizeof(struct ether_header));  
         switch (ipv4_header->ip_p){
             case ICMPV4_PROTOCOL:
                 //printf("ICMP packet\n");
@@ -365,7 +365,7 @@ void process_ipv6_header(struct ip6_hdr* ipv6_header){
  * @param packet_header Štruktúra hlavičky paketu
  */
 void process_ipv6_tcp_packet(struct ip6_hdr* ipv6_header, const u_char *packet, const struct pcap_pkthdr *packet_header){
-    struct tcphdr *tcp_header = (struct tcphdr*) (packet + (ipv6_header->ip6_ctlun.ip6_un1.ip6_un1_plen * 4) + sizeof(struct ether_header));
+    struct tcphdr *tcp_header = (struct tcphdr*) (packet + IPV6_HEADER_LENGTH + sizeof(struct ether_header));
     printf("src port : %u\n",ntohs(tcp_header->th_sport));
     printf("dst port : %u\n",ntohs(tcp_header->th_dport));
 
@@ -379,7 +379,7 @@ void process_ipv6_tcp_packet(struct ip6_hdr* ipv6_header, const u_char *packet, 
  * @param packet_header Štruktúra hlavičky paketu
  */
 void process_ipv6_udp_packet(struct ip6_hdr* ipv6_header, const u_char *packet, const struct pcap_pkthdr *packet_header){
-    struct udphdr *udp_header = (struct udphdr*) (packet + (ipv6_header->ip6_ctlun.ip6_un1.ip6_un1_plen * 4) + sizeof(struct ether_header));
+    struct udphdr *udp_header = (struct udphdr*) (packet + IPV6_HEADER_LENGTH + sizeof(struct ether_header));
     printf("src port : %u\n",ntohs(udp_header->uh_sport));
     printf("dst port : %u\n",ntohs(udp_header->uh_dport));
 }
