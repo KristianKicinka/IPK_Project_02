@@ -507,6 +507,9 @@ void print_hexa_line(const u_char *data, int data_length, int data_offset){
             printf(".");
         }
         data_array++;
+        if (i == 7){
+            printf(" ");
+        }
     }
     
     printf("\n");
