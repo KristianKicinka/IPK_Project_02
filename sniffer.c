@@ -64,8 +64,13 @@ void initialize_sniffer_options(SnifferOptions *sniffer_options){
  * @param argv Pole argumentov skriptu
  * @param sniffer_options Konfiguračná štruktúra
  * @link Zdroj : Lekce 8 - Céčko a Linux - getopt_long a shell. itnetwork.cz - Učíme národ IT [online]. 
- *               Copyright © 2022 itnetwork.cz. Veškerý obsah webu [cit. 22.04.2022]. 
+ *               Copyright © 2022 itnetwork.cz. Celkový obsah webu [cit. 22.04.2022]. 
  *               Dostupné z: https://www.itnetwork.cz/cecko/linux/cecko-a-linux-getopt-long-a-shell
+ *               
+ *               Moved [online]. Copyright © 2012, 2013, Oracle and [cit. 22.04.2022]. 
+ *               Dostupné z: https://docs.oracle.com/cd/E86824_01/html/E54766/getopt-long-3c.html
+ * 
+ *               
  */
 void check_arguments(int argc, char *argv[], SnifferOptions *sniffer_options){
     if (argc > 1){
@@ -421,7 +426,9 @@ void process_ipv4_udp_packet(struct ip* ipv4_header, const u_char *packet, const
  * 
  * @param data Dáta paketu
  * @param data_size Veľkosť dát
- * @link Zdroj : Home | TCPDUMP & LIBPCAP [online]. Dostupné z: https://www.tcpdump.org/other/sniffex.c
+ * @link Zdroj : Home | TCPDUMP & LIBPCAP [online].
+ *               Copyright © 2022 [cit. 22.04.2022].
+ *               Dostupné z: https://www.tcpdump.org/other/sniffex.c
  */
 void process_packet_data(const u_char *data, int data_size){
     int length_remaining = data_size;
@@ -459,15 +466,17 @@ void process_packet_data(const u_char *data, int data_size){
  * @param data Dáta určené na zobrazenie
  * @param data_length Dĺžka dát
  * @param data_offset Odstup dát
- * @link Zdroj : Home | TCPDUMP & LIBPCAP [online]. Dostupné z: https://www.tcpdump.org/other/sniffex.c
+ * @link Zdroj : Home | TCPDUMP & LIBPCAP [online]. 
+ *               Copyright © 2022 [cit. 22.04.2022].
+ *               Dostupné z: https://www.tcpdump.org/other/sniffex.c
  */
 void print_hexa_line(const u_char *data, int data_length, int data_offset){
     const u_char *data_array;
 
-    // printing offset
+    // zobrazenie offsetu bajtov
     printf("0x%04x: ", data_offset);
 
-    // hex printing
+    // zobrazenie hexadecimálnych hodnôt
     data_array = data;
     for (int i = 0; i < data_length; i++){
         printf("%02x ",*data_array);
@@ -489,7 +498,7 @@ void print_hexa_line(const u_char *data, int data_length, int data_offset){
     }
     printf(" ");
 
-    // ascii printing
+    // zobrazenie ASCII hodnôt
     data_array = data;
     for (int i = 0; i < data_length; i++){
         if (isprint(*data_array)){
@@ -508,8 +517,17 @@ void print_hexa_line(const u_char *data, int data_length, int data_offset){
  * 
  * @param header Štruktúra hlavičky paketu
  * @link Zdroj : c - How to print time in format: 2009‐08‐10 18:17:54.811 - Stack Overflow. 
- *               Stack Overflow - Where Developers Learn, Share, & Build Careers [online]. 
+ *               Stack Overflow - Where Developers Learn, Share, & Build Careers [online].
+ *               Copyright © 2022 [cit. 22.04.2022].
  *               Dostupné z: https://stackoverflow.com/questions/3673226/how-to-print-time-in-format-2009-08-10-181754-811
+ *                  
+ *               strftime - C++ Reference. cplusplus.com - The C++ Resources Network [online]. 
+ *               Copyright © cplusplus.com, 2000 [cit. 22.04.2022]. Dostupné z: https://www.cplusplus.com/reference/ctime/strftime/
+ * 
+ *               strftime(3) - Linux manual page. Michael Kerrisk - man7.org [online]. 
+ *               Dostupné z: https://man7.org/linux/man-pages/man3/strftime.3.html
+ * 
+ *               Formát času a dátumu : https://www.strfti.me
  */
 void print_timestamp(const struct pcap_pkthdr *header){
     char timestamp[MAX_LENGTH];
@@ -535,6 +553,7 @@ void print_timestamp(const struct pcap_pkthdr *header){
  * @param sniffing_device Štruktúra odpočúvacieho rozhrania
  * @param sniffer_options Konfiguračná štruktúra
  * @link Zdroj : Using libpcap in C | DevDungeon. DevDungeon | Virtual Hackerspace [online].
+ *               Copyright © 2022 [cit. 22.04.2022].
  *               Dostupné z: https://www.devdungeon.com/content/using-libpcap-c
  */
 void set_filters(pcap_t **sniffing_device, SnifferOptions *sniffer_options ){

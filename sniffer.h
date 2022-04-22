@@ -91,7 +91,14 @@ struct option long_options[] = {
 // t https://www.geeksforgeeks.org/internet-protocol-version-6-ipv6-header/
 // https://blog.luukhendriks.eu/2015/11/05/libpcap-printing-ipv6-flow-labels.html
 
-// Zdroj makra : https://stackoverflow.com/questions/1052746/getopt-does-not-parse-optional-arguments-to-parameters
+
+/**
+ * @link Zdroj : c - getopt does not parse optional arguments to parameters - Stack Overflow. 
+ *               Stack Overflow - Where Developers Learn, Share, & Build Careers [online].
+ *               Copyright © 2022 [cit. 22.04.2022].
+ *               Dostupné z: https://stackoverflow.com/questions/1052746/getopt-does-not-parse-optional-arguments-to-parameters
+ * 
+ */
 #define OPTIONAL_ARGUMENT_IS_PRESENT \
     ((optarg == NULL && optind < argc && argv[optind][0] != '-') \
      ? (bool) (optarg = argv[optind++]) \
