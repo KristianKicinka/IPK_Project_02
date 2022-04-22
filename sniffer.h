@@ -76,22 +76,6 @@ struct option long_options[] = {
     { NULL, 0, NULL, 0}
 };
 
-// https://stackoverflow.com/questions/1052746/getopt-does-not-parse-optional-arguments-to-parameters
-// https://www.binarytides.com/packet-sniffer-code-c-libpcap-linux-sockets/
-// https://stackoverflow.com/questions/7489093/getopt-long-proper-way-to-use-it
-// https://www.gnu.org/software/libc/manual/html_node/Getopt-Long-Options.html
-// https://www.itnetwork.cz/cecko/linux/cecko-a-linux-getopt-long-a-shell
-// t https://www.tcpdump.org/manpages/pcap.3pcap.html
-// t https://www.tcpdump.org/manpages/pcap_loop.3pcap.html
-// t https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml
-// https://www.devdungeon.com/content/using-libpcap-c
-// vypis : https://www.tcpdump.org/other/sniffex.c
-// https://stackoverflow.com/questions/3464194/how-can-i-convert-an-integer-to-a-hexadecimal-string-in-c
-// t http://osr600doc.xinuos.com/en/SDK_netapi/sockC.TheIPv6sockaddrstructure.html
-// https://gist.github.com/q2hide/244bf94d3b72cc17d9ca najst
-// t https://www.geeksforgeeks.org/internet-protocol-version-6-ipv6-header/
-// https://blog.luukhendriks.eu/2015/11/05/libpcap-printing-ipv6-flow-labels.html
-
 
 /**
  * @link Zdroj : c - getopt does not parse optional arguments to parameters - Stack Overflow. 
