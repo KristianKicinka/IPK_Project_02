@@ -422,7 +422,7 @@ void process_ipv4_udp_packet(struct ip* ipv4_header, const u_char *packet, const
 }
 
 /**
- * @brief Funkcia zabezpečuje spracovanie dát paketu (data payloadu)
+ * @brief Funkcia zabezpečuje spracovanie dát paketu
  * 
  * @param data Dáta paketu
  * @param data_size Veľkosť dát
@@ -461,7 +461,7 @@ void process_packet_data(const u_char *data, int data_size){
 }
 
 /**
- * @brief Funkcia zabezpečuje výpis riadku data payloadu 
+ * @brief Funkcia zabezpečuje výpis riadku dát paketu
  * 
  * @param data Dáta určené na zobrazenie
  * @param data_length Dĺžka dát
