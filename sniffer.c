@@ -136,7 +136,8 @@ void check_arguments(int argc, char *argv[], SnifferOptions *sniffer_options){
                 }
             }
     }else{
-       close_application(ARG_ERROR);
+        print_available_devices(sniffer_options);
+        close_application(CORRECT_CLOSE);
     }
     
 }
