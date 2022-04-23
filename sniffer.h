@@ -1,3 +1,14 @@
+/**
+ * @file sniffer.h
+ * @author Kristán Kičinka (xkicin02)
+ * @brief IPK Projekt 2 (Sniffer paketov)
+ * @version 0.1
+ * @date 2022-04-23
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
+
 #ifndef SNIFFER_H
 #define SNIFFER_H
 
