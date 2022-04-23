@@ -210,7 +210,7 @@ void select_sniffing_device(pcap_t **sniffing_device, SnifferOptions *sniffer_op
 
     *sniffing_device = pcap_open_live(sniffer_options->interface , 65536 , 1 , 1000 , err_buffer);
 	
-	if (sniffing_device == NULL){
+	if (*sniffing_device == NULL){
 		close_application(INTERNAL_ERROR);
 	}
 }
@@ -607,6 +607,7 @@ void set_filters(pcap_t **sniffing_device, SnifferOptions *sniffer_options ){
     int processed_params_count = sniffer_options->parameters_count;
 
     if(!(packet_filter = (char *) calloc(MAX_LENGTH,sizeof(char)))){
+        pcap_freecode(&filter);
         close_application(INTERNAL_ERROR);
     }
 
@@ -658,12 +659,19 @@ void set_filters(pcap_t **sniffing_device, SnifferOptions *sniffer_options ){
         packet_filter = "";
 
     if (pcap_compile((*sniffing_device), &filter, packet_filter, 0, PCAP_NETMASK_UNKNOWN ) == -1) {
+        pcap_freecode(&filter);
+        free(packet_filter);
         close_application(SNIFFER_FILTER_ERROR);
     }
     
     if (pcap_setfilter((*sniffing_device), &filter) == -1) {
+        pcap_freecode(&filter);
+        free(packet_filter);
         close_application(SNIFFER_FILTER_ERROR);
     }
+
+    free(packet_filter);
+    pcap_freecode(&filter);
 
 }
 
