@@ -247,6 +247,7 @@ void proccess_sniffed_packet(u_char *args, const struct pcap_pkthdr *header, con
             case ICMPV4_PROTOCOL:
                 //printf("ICMP packet\n");
                 process_ipv4_header(ipv4_header);
+                process_icmp_packet(ipv4_header, packet, header);
                 break;
             case TCP_PROTOCOL:
                 //printf("TCP packet\n");
@@ -273,6 +274,7 @@ void proccess_sniffed_packet(u_char *args, const struct pcap_pkthdr *header, con
             case ICMPV6_PROTOCOL:
                 //printf("ICMP v6 packet\n");
                 process_ipv6_header(ipv6_header);
+                process_icmp6_packet(ipv6_header, packet, header);
                 break;
             case TCP_PROTOCOL:
                 //printf("TCP v6 packet\n");
@@ -337,7 +339,7 @@ void process_ipv4_header(struct ip* ipv4_header){
 /**
  * @brief Funkcia zabezpečuje spracovanie IPv6 hlavičky
  * 
- * @param ipv6_header 
+ * @param ipv6_header Štruktúra IPv6 hlavičky paketu
  * @link Zdroj : string to sockaddr_in6 / sockaddr_in6 to string · 
  *               GitHub. [online]. Copyright © 2022 GitHub, Inc. [cit. 22.04.2022].
  *               Dostupné z: https://gist.github.com/q2hide/244bf94d3b72cc17d9ca
@@ -439,6 +441,34 @@ void process_arp_packet(const u_char *packet, const struct pcap_pkthdr *packet_h
     printf("Sender IP : %s\n",ip_sender_address);
     printf("Target IP : %s\n",ip_target_address);
 
+}
+
+/**
+ * @brief Funkcia zabezpečuje spracovanie ICMP paketu 
+ * 
+ * @param ipv4_header Štruktúra IPv4 hlavičky paketu
+ * @param packet Odchytený paket
+ * @param packet_header Štruktúra hlavičky paketu
+ */
+void process_icmp_packet(struct ip* ipv4_header, const u_char *packet, const struct pcap_pkthdr *packet_header){
+    struct icmp *icmp_packet = (struct icmp*)(packet + sizeof(struct ether_header) + (ipv4_header->ip_hl * 4));
+
+    printf("ICMP type : %hhu\n",icmp_packet->icmp_type);
+    printf("ICMP code : %hhu\n",icmp_packet->icmp_code);
+}
+
+/**
+ * @brief Funkcia zabezpečuje spracovanie ICMPv6 paketu
+ * 
+ * @param ipv6_header Štruktúra IPv6 hlavičky paketu
+ * @param packet Odchytený paket
+ * @param packet_header Štruktúra hlavičky paketu
+ */
+void process_icmp6_packet(struct ip6_hdr* ipv6_header, const u_char *packet, const struct pcap_pkthdr *packet_header){
+    struct icmp6_hdr *icmp6_packet = (struct icmp6_hdr*)(packet + IPV6_HEADER_LENGTH + sizeof(struct ether_header));
+
+    printf("ICMPv6 type : %hhu\n",icmp6_packet->icmp6_type);
+    printf("ICMPv6 code : %hhu\n",icmp6_packet->icmp6_code);
 }
 
 /**

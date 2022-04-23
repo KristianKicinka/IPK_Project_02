@@ -110,11 +110,13 @@ void process_ipv4_udp_packet(struct ip* ipv4_header, const u_char *packet, const
 void process_ipv4_tcp_packet(struct ip* ipv4_header, const u_char *packet, const struct pcap_pkthdr *packet_header);
 void process_packet_data(const u_char *data, int data_size);
 void print_hexa_line(const u_char *data, int data_size, int data_offset);
+void process_icmp_packet(struct ip* ipv4_header, const u_char *packet, const struct pcap_pkthdr *packet_header);
 
 //IPV6
 void process_ipv6_header(struct ip6_hdr* ipv6_header);
 void process_ipv6_tcp_packet(struct ip6_hdr* ipv6_header, const u_char *packet, const struct pcap_pkthdr *packet_header);
 void process_ipv6_udp_packet(struct ip6_hdr* ipv6_header, const u_char *packet, const struct pcap_pkthdr *packet_header);
+void process_icmp6_packet(struct ip6_hdr* ipv6_header, const u_char *packet, const struct pcap_pkthdr *packet_header);
 
 
 #endif // !SNIFFER_H
