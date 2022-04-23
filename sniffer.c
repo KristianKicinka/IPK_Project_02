@@ -283,6 +283,7 @@ void proccess_sniffed_packet(u_char *args, const struct pcap_pkthdr *header, con
         }
     }
      process_packet_data(packet,header->len);
+     printf("\n");
 }
 
 /**
