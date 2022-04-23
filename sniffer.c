@@ -358,6 +358,10 @@ void process_ipv6_header(struct ip6_hdr* ipv6_header){
  * @param ipv6_header Štruktúra IPv6 hlavičky paketu
  * @param packet Odchytený paket
  * @param packet_header Štruktúra hlavičky paketu
+ * @link Zdroj : How to code a Packet Sniffer in C with Libpcap on Linux - BinaryTides. 
+ *               BinaryTides - Coding, Software, Tech and Reviews [online]. 
+ *               Copyright © 2022 [vid. 22.04.2022]. 
+ *               Dostupné z: https://www.binarytides.com/packet-sniffer-code-c-libpcap-linux-sockets/
  */
 void process_ipv6_tcp_packet(struct ip6_hdr* ipv6_header, const u_char *packet, const struct pcap_pkthdr *packet_header){
     struct tcphdr *tcp_header = (struct tcphdr*) (packet + IPV6_HEADER_LENGTH + sizeof(struct ether_header));
@@ -372,6 +376,10 @@ void process_ipv6_tcp_packet(struct ip6_hdr* ipv6_header, const u_char *packet, 
  * @param ipv6_header Štruktúra IPv6 hlavičky paketu
  * @param packet Odchytený paket
  * @param packet_header Štruktúra hlavičky paketu
+ * @link Zdroj : How to code a Packet Sniffer in C with Libpcap on Linux - BinaryTides. 
+ *               BinaryTides - Coding, Software, Tech and Reviews [online]. 
+ *               Copyright © 2022 [vid. 22.04.2022]. 
+ *               Dostupné z: https://www.binarytides.com/packet-sniffer-code-c-libpcap-linux-sockets/
  */
 void process_ipv6_udp_packet(struct ip6_hdr* ipv6_header, const u_char *packet, const struct pcap_pkthdr *packet_header){
     struct udphdr *udp_header = (struct udphdr*) (packet + IPV6_HEADER_LENGTH + sizeof(struct ether_header));
@@ -421,6 +429,9 @@ void process_ipv4_udp_packet(struct ip* ipv4_header, const u_char *packet, const
  * 
  * @param packet Odchytený paket
  * @param packet_header Štruktúra hlavičky paketu
+ * @link Zdroj : string to sockaddr_in6 / sockaddr_in6 to string · 
+ *               GitHub. [online]. Copyright © 2022 GitHub, Inc. [vid. 22.04.2022].
+ *               Dostupné z: https://gist.github.com/q2hide/244bf94d3b72cc17d9ca
  */
 void process_arp_packet(const u_char *packet, const struct pcap_pkthdr *packet_header){
     struct ether_arp *arp_packet = (struct ether_arp*) (packet + sizeof(struct ether_header));
