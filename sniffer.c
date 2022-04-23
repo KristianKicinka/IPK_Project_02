@@ -8,7 +8,7 @@
  * @param argv Pole argumentov skriptu
  * @return int Návratový kód
  * @link Zdroj : How to code a Packet Sniffer in C with Libpcap on Linux - BinaryTides. BinaryTides - Coding, Software,
- *               Tech and Reviews [online]. Copyright © 2022 [cit. 22.04.2022]. 
+ *               Tech and Reviews [online]. Copyright © 2022 [vid. 22.04.2022]. 
  *               Dostupné z: https://www.binarytides.com/packet-sniffer-code-c-libpcap-linux-sockets/
  */
 int main(int argc, char *argv[]){
@@ -64,7 +64,7 @@ void initialize_sniffer_options(SnifferOptions *sniffer_options){
  * @param argv Pole argumentov skriptu
  * @param sniffer_options Konfiguračná štruktúra
  * @link Zdroj : Lekce 8 - Céčko a Linux - getopt_long a shell. itnetwork.cz - Učíme národ IT [online]. 
- *               Copyright © 2022 itnetwork.cz. Celkový obsah webu [cit. 22.04.2022]. 
+ *               Copyright © 2022 itnetwork.cz. Celkový obsah webu [vid. 22.04.2022]. 
  *               Dostupné z: https://www.itnetwork.cz/cecko/linux/cecko-a-linux-getopt-long-a-shell
  *               
  *               Moved [online]. Copyright © 2012, 2013, Oracle and [cit. 22.04.2022]. 
@@ -148,7 +148,7 @@ void check_arguments(int argc, char *argv[], SnifferOptions *sniffer_options){
  * @param sniffer_options Konfiguračná štruktúra
  * @link Zdroj : How to code a Packet Sniffer in C with Libpcap on Linux - BinaryTides. 
  *               BinaryTides - Coding, Software, Tech and Reviews [online]. 
- *               Copyright © 2022 [cit. 22.04.2022]. 
+ *               Copyright © 2022 [vid. 22.04.2022]. 
  *               Dostupné z: https://www.binarytides.com/packet-sniffer-code-c-libpcap-linux-sockets/
  */
 void list_available_devices( SnifferOptions *sniffer_options){
@@ -191,7 +191,7 @@ void print_available_devices(SnifferOptions *sniffer_options){
  *               Dostupné z: https://www.devdungeon.com/content/using-libpcap-c
  *               How to code a Packet Sniffer in C with Libpcap on Linux - BinaryTides. 
  *               BinaryTides - Coding, Software, Tech and Reviews [online]. 
- *               Copyright © 2022 [cit. 22.04.2022]. 
+ *               Copyright © 2022 [vid. 22.04.2022]. 
  *               Dostupné z: https://www.binarytides.com/packet-sniffer-code-c-libpcap-linux-sockets/
  */
 void select_sniffing_device(pcap_t **sniffing_device, SnifferOptions *sniffer_options ){
@@ -223,7 +223,7 @@ void select_sniffing_device(pcap_t **sniffing_device, SnifferOptions *sniffer_op
  * @param packet Odchytený paket
  * @link Zdroj : How to code a Packet Sniffer in C with Libpcap on Linux - BinaryTides. 
  *               BinaryTides - Coding, Software, Tech and Reviews [online]. 
- *               Copyright © 2022 [cit. 22.04.2022]. 
+ *               Copyright © 2022 [vid. 22.04.2022]. 
  *               Dostupné z: https://www.binarytides.com/packet-sniffer-code-c-libpcap-linux-sockets/
  */
 void proccess_sniffed_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *packet){
@@ -320,7 +320,7 @@ void process_ethernet_header(struct ether_header* eth_header, const struct pcap_
  * @param ipv4_header Štruktúra IPv4 hlavičky
  * @link Zdroj : How to code a Packet Sniffer in C with Libpcap on Linux - BinaryTides. 
  *               BinaryTides - Coding, Software, Tech and Reviews [online]. 
- *               Copyright © 2022 [cit. 22.04.2022]. 
+ *               Copyright © 2022 [vid. 22.04.2022]. 
  *               Dostupné z: https://www.binarytides.com/packet-sniffer-code-c-libpcap-linux-sockets/
  */
 void process_ipv4_header(struct ip* ipv4_header){
@@ -394,7 +394,7 @@ void process_ipv6_udp_packet(struct ip6_hdr* ipv6_header, const u_char *packet, 
  * @param packet_header Štruktúra hlavičky paketu
  * @link Zdroj : How to code a Packet Sniffer in C with Libpcap on Linux - BinaryTides. 
  *               BinaryTides - Coding, Software, Tech and Reviews [online]. 
- *               Copyright © 2022 [cit. 22.04.2022]. 
+ *               Copyright © 2022 [vid. 22.04.2022]. 
  *               Dostupné z: https://www.binarytides.com/packet-sniffer-code-c-libpcap-linux-sockets/
  */
 void process_ipv4_tcp_packet(struct ip* ipv4_header, const u_char *packet, const struct pcap_pkthdr *packet_header){
@@ -412,7 +412,7 @@ void process_ipv4_tcp_packet(struct ip* ipv4_header, const u_char *packet, const
  * @param packet_header Štruktúra hlavičky paketu
  * @link Zdroj : How to code a Packet Sniffer in C with Libpcap on Linux - BinaryTides. 
  *               BinaryTides - Coding, Software, Tech and Reviews [online]. 
- *               Copyright © 2022 [cit. 22.04.2022]. 
+ *               Copyright © 2022 [vid. 22.04.2022]. 
  *               Dostupné z: https://www.binarytides.com/packet-sniffer-code-c-libpcap-linux-sockets/
  */
 void process_ipv4_udp_packet(struct ip* ipv4_header, const u_char *packet, const struct pcap_pkthdr *packet_header){
@@ -541,11 +541,11 @@ void print_hexa_line(const u_char *data, int data_length, int data_offset){
  * @param header Štruktúra hlavičky paketu
  * @link Zdroj : c - How to print time in format: 2009‐08‐10 18:17:54.811 - Stack Overflow. 
  *               Stack Overflow - Where Developers Learn, Share, & Build Careers [online].
- *               Copyright © 2022 [cit. 22.04.2022].
+ *               Copyright © 2022 [vid. 22.04.2022].
  *               Dostupné z: https://stackoverflow.com/questions/3673226/how-to-print-time-in-format-2009-08-10-181754-811
  *                  
  *               strftime - C++ Reference. cplusplus.com - The C++ Resources Network [online]. 
- *               Copyright © cplusplus.com, 2000 [cit. 22.04.2022]. Dostupné z: https://www.cplusplus.com/reference/ctime/strftime/
+ *               Copyright © cplusplus.com, 2000 [vid. 22.04.2022]. Dostupné z: https://www.cplusplus.com/reference/ctime/strftime/
  * 
  *               strftime(3) - Linux manual page. Michael Kerrisk - man7.org [online]. 
  *               Dostupné z: https://man7.org/linux/man-pages/man3/strftime.3.html
@@ -576,7 +576,7 @@ void print_timestamp(const struct pcap_pkthdr *header){
  * @param sniffing_device Štruktúra odpočúvacieho rozhrania
  * @param sniffer_options Konfiguračná štruktúra
  * @link Zdroj : Using libpcap in C | DevDungeon. DevDungeon | Virtual Hackerspace [online].
- *               Copyright © 2022 [cit. 22.04.2022].
+ *               Copyright © 2022 [vid. 22.04.2022].
  *               Dostupné z: https://www.devdungeon.com/content/using-libpcap-c
  */
 void set_filters(pcap_t **sniffing_device, SnifferOptions *sniffer_options ){
