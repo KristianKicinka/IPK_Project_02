@@ -18,6 +18,8 @@
 #include <net/ethernet.h>
 #include <net/if_arp.h>
 
+#include <netinet/if_ether.h>
+
 #include <netinet/ip.h>
 #include <netinet/ip6.h>
 
@@ -100,6 +102,7 @@ void proccess_sniffed_packet(u_char *args, const struct pcap_pkthdr *header, con
 void process_ethernet_header(struct ether_header* eth_header, const struct pcap_pkthdr *header);
 void print_timestamp(const struct pcap_pkthdr *header);
 void help_function();
+void process_arp_packet(const u_char *packet, const struct pcap_pkthdr *packet_header);
 
 // IPV4
 void process_ipv4_header(struct ip* ipv4_header);

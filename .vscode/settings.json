@@ -8,6 +8,7 @@
         "ethernet.h": "c",
         "ip6.h": "c",
         "icmp6.h": "c",
-        "inet.h": "c"
+        "inet.h": "c",
+        "if_ether.h": "c"
     }
 }

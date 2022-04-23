@@ -235,6 +235,7 @@ void proccess_sniffed_packet(u_char *args, const struct pcap_pkthdr *header, con
         //printf("ARP packet\n");
         print_timestamp(header);
         process_ethernet_header(eth_header,header);
+        process_arp_packet(packet,header);
 
     }else if(ntohs(eth_header->ether_type) == ETHERTYPE_IP){
 
@@ -418,6 +419,25 @@ void process_ipv4_udp_packet(struct ip* ipv4_header, const u_char *packet, const
     struct udphdr *udp_header = (struct udphdr*) (packet + (ipv4_header->ip_hl * 4) + sizeof(struct ether_header));
     printf("src port : %u\n",ntohs(udp_header->uh_sport));
     printf("dst port : %u\n",ntohs(udp_header->uh_dport));
+
+}
+
+/**
+ * @brief Funkcia zabezpečuje spracovanie ARP paketu
+ * 
+ * @param packet Odchytený paket
+ * @param packet_header Štruktúra hlavičky paketu
+ */
+void process_arp_packet(const u_char *packet, const struct pcap_pkthdr *packet_header){
+    struct ether_arp *arp_packet = (struct ether_arp*) (packet + sizeof(struct ether_header));
+
+    char ip_sender_address[INET_ADDRSTRLEN], ip_target_address[INET_ADDRSTRLEN];
+
+    inet_ntop(AF_INET,&(arp_packet->arp_spa),ip_sender_address,INET_ADDRSTRLEN);
+    inet_ntop(AF_INET,&(arp_packet->arp_tpa),ip_target_address,INET_ADDRSTRLEN);
+    
+    printf("Sender IP : %s\n",ip_sender_address);
+    printf("Target IP : %s\n",ip_target_address);
 
 }
 
