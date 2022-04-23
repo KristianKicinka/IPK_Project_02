@@ -669,7 +669,7 @@ void set_filters(pcap_t **sniffing_device, SnifferOptions *sniffer_options ){
 
     // Zlé nastavenie filtrov
     if(( sniffer_options->arp == true || sniffer_options->icmp == true ) && sniffer_options->port_number != -1 )
-        packet_filter = "";
+        strcpy(packet_filter,"");
 
     if (pcap_compile((*sniffing_device), &filter, packet_filter, 0, PCAP_NETMASK_UNKNOWN ) == -1) {
         pcap_freecode(&filter);
